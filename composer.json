@@ -1,0 +1,10 @@
+{
+    "name": "venor/venkod",
+    "license": "MIT",
+    "config": {
+        "sort-packages": true
+    },
+    "require": {
+        "php": ">=7.4"
+    }
+}
