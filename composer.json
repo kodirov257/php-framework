@@ -8,9 +8,17 @@
         "php": ">=7.4",
         "roave/security-advisories": "dev-master"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
     "autoload": {
         "psr-4": {
             "Framework\\": "src/Framework/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
         }
     }
 }
