@@ -1,3 +1,5 @@
 <?php
 
-echo 'Hello' . PHP_EOL;
+$name = $_GET['name'] ?? 'Guest';
+
+echo 'Hello, ' . $name . '!';
