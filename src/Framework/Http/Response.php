@@ -2,7 +2,7 @@
 
 namespace Framework\Http;
 
-class Response
+class Response implements ResponseInterface
 {
     private array $headers = [];
     private mixed $body;

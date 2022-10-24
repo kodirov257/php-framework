@@ -2,7 +2,7 @@
 
 namespace Framework\Http;
 
-class Request
+class Request implements ServerRequestInterface
 {
     private array $queryParams;
     private mixed $parsedBody;
@@ -30,7 +30,7 @@ class Request
         return $this->parsedBody;
     }
 
-    public function withParsedBody(array $data): self
+    public function withParsedBody($data): self
     {
         $new = clone $this;
         $new->parsedBody = $data;
