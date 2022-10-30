@@ -1,14 +1,22 @@
 <?php
 
-namespace App\Http\Action\Blog;
+namespace App\Http\Controllers;
 
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ShowAction
+class BlogController
 {
-    public function __invoke(ServerRequestInterface $request)
+    public function index()
+    {
+        return new JsonResponse([
+            ['id' => 2, 'title' => 'The Second Post'],
+            ['id' => 1, 'title' => 'The First Post'],
+        ]);
+    }
+
+    public function show(ServerRequestInterface $request)
     {
         $id = $request->getAttribute('id');
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Action;
+namespace App\Http\Controllers;
 
 use Laminas\Diactoros\Response\HtmlResponse;
 use Psr\Http\Message\ServerRequestInterface;
 
-class HelloAction
+class HelloController
 {
-    public function __invoke(ServerRequestInterface $request)
+    public function index(ServerRequestInterface $request)
     {
         $name = $request->getQueryParams()['name'] ?? 'Guest';
         return new HtmlResponse('Hello, ' . $name . '!');

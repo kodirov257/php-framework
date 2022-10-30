@@ -1,19 +1,19 @@
 <?php
 
-namespace Tests\App\Http\Action;
+namespace Tests\App\Http\Controllers;
 
-use App\Http\Action\HelloAction;
+use App\Http\Controllers\HelloController;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 
-class HelloActionTest extends TestCase
+class HelloControllerTest extends TestCase
 {
     public function testGuest()
     {
-        $action = new HelloAction();
+        $controller = new HelloController();
 
         $request = new ServerRequest();
-        $response = $action($request);
+        $response = $controller->index($request);
 
         self::assertEquals(200, $response->getStatusCode());
         self::assertEquals('Hello, Guest!', $response->getBody()->getContents());
@@ -21,11 +21,11 @@ class HelloActionTest extends TestCase
 
     public function testJohn()
     {
-        $action = new HelloAction();
+        $controller = new HelloController();
 
         $request = (new ServerRequest())->withQueryParams(['name' => 'John']);
 
-        $response = $action($request);
+        $response = $controller->index($request);
 
         self::assertEquals('Hello, John!', $response->getBody()->getContents());
     }

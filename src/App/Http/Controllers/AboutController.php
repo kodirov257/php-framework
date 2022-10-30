@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Action;
+namespace App\Http\Controllers;
 
 use Laminas\Diactoros\Response\HtmlResponse;
 
-class AboutAction
+class AboutController
 {
-    public function __invoke()
+    public function index()
     {
         return new HtmlResponse('I am a simple site');
     }

@@ -2,10 +2,12 @@
 
 namespace Framework\Http;
 
+use Psr\Http\Message\ServerRequestInterface;
+
 class ActionResolver
 {
-    public function resolve($handler): callable
+    public function resolve($handler, ServerRequestInterface $request)
     {
-        return \is_string($handler) ? new $handler() : $handler;
+        return \is_array($handler) ? (new $handler[0]())->{$handler[1]}($request) : $handler;
     }
 }

@@ -1,15 +1,13 @@
 <?php
 
-use App\Http\Action;
+use App\Http\Controllers;
 use Framework\Http\ActionResolver;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\Router\RouteCollection;
 use Framework\Http\Router\Router;
 use Laminas\Diactoros\Response\HtmlResponse;
-use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
-use Psr\Http\Message\ServerRequestInterface;
 
 chdir(dirname(__DIR__));
 require 'vendor/autoload.php';
@@ -18,10 +16,10 @@ require 'vendor/autoload.php';
 
 $routes = new RouteCollection();
 
-$routes->get('home', '/', Action\HelloAction::class);
-$routes->get('about', '/about', Action\AboutAction::class);
-$routes->get('blog', '/blog', Action\Blog\IndexAction::class);
-$routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class, ['id' => '\d+']);
+$routes->get('home', '/', [Controllers\HelloController::class, 'index']);
+$routes->get('about', '/about', [Controllers\AboutController::class, 'index']);
+$routes->get('blog', '/blog', [Controllers\BlogController::class, 'index']);
+$routes->get('blog_show', '/blog/{id}', [Controllers\BlogController::class, 'show'], ['id' => '\d+']);
 
 $router = new Router($routes);
 $resolver = new ActionResolver();
@@ -35,8 +33,7 @@ try {
     foreach ($result->getAttributes() as $attribute => $value) {
         $request = $request->withAttribute($attribute, $value);
     }
-    $action = $resolver->resolve($result->getHandler());
-    $response = $action($request);
+    $response = $resolver->resolve($result->getHandler(), $request);
 } catch (RequestNotMatchedException $e) {
     $response = new HtmlResponse('Undefined page', 404);
 }
