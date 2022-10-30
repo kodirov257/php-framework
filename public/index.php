@@ -4,7 +4,7 @@ use App\Http\Controllers;
 use Framework\Http\ActionResolver;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\Router\RouteCollection;
-use Framework\Http\Router\Router;
+use Framework\Http\Router\SimpleRouter;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
@@ -21,7 +21,7 @@ $routes->get('about', '/about', [Controllers\AboutController::class, 'index']);
 $routes->get('blog', '/blog', [Controllers\BlogController::class, 'index']);
 $routes->get('blog_show', '/blog/{id}', [Controllers\BlogController::class, 'show'], ['id' => '\d+']);
 
-$router = new Router($routes);
+$router = new SimpleRouter($routes);
 $resolver = new ActionResolver();
 
 ### Running
