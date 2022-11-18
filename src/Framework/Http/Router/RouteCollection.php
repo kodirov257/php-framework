@@ -2,44 +2,15 @@
 
 namespace Framework\Http\Router;
 
-use Framework\Http\Router\Route\RegexpRoute;
-use Framework\Http\Router\Route\Route;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
 
-class RouteCollection
+class RouteCollection extends SymfonyRouteCollection
 {
-    private array $routes = [];
-
-    public function addRoute(Route $route): void
+    public function add(string $name, Route $route, int $priority = 0): Route
     {
-        $this->routes[] = $route;
-    }
+        parent::add($name, $route, $priority);
 
-    public function add($name, $pattern, $handler, array $methods, array $tokens = []): void
-    {
-        $this->addRoute(new RegexpRoute($name, $pattern, $handler, $methods, $tokens));
+        return $route;
     }
-
-    public function any($name, $pattern, $handler, array $tokens = []): void
-    {
-        $this->addRoute(new RegexpRoute($name, $pattern, $handler, [], $tokens));
-    }
-
-    public function get($name, $pattern, $handler, array $tokens = []): void
-    {
-        $this->addRoute(new RegexpRoute($name, $pattern, $handler, ['GET'], $tokens));
-    }
-
-    public function post($name, $pattern, $handler, array $tokens = []): void
-    {
-        $this->addRoute(new RegexpRoute($name, $pattern, $handler, ['POST'], $tokens));
-    }
-
-    /**
-     * @return RegexpRoute[]
-     */
-    public function getRoutes(): array
-    {
-        return $this->routes;
-    }
-
 }

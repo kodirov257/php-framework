@@ -2,9 +2,9 @@
 
 use App\Http\Controllers;
 use Framework\Http\ActionResolver;
+use Framework\Http\RequestContext;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
-use Framework\Http\Router\RouteCollection;
-use Framework\Http\Router\SimpleRouter;
+use Framework\Http\Router\Router;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
@@ -14,14 +14,13 @@ require 'vendor/autoload.php';
 
 ### Initialization
 
-$routes = new RouteCollection();
+$router = new Router();
 
-$routes->get('home', '/', [Controllers\HelloController::class, 'index']);
-$routes->get('about', '/about', [Controllers\AboutController::class, 'index']);
-$routes->get('blog', '/blog', [Controllers\BlogController::class, 'index']);
-$routes->get('blog_show', '/blog/{id}', [Controllers\BlogController::class, 'show'], ['id' => '\d+']);
+$router->get('home', '/', [Controllers\HelloController::class, 'index']);
+$router->get('about', '/about', [Controllers\AboutController::class, 'index']);
+$router->get('blog', '/blog', [Controllers\BlogController::class, 'index']);
+$router->get('blog_show', '/blog/{id}', [Controllers\BlogController::class, 'show'], ['id' => '\d+']);
 
-$router = new SimpleRouter($routes);
 $resolver = new ActionResolver();
 
 ### Running
@@ -29,7 +28,11 @@ $resolver = new ActionResolver();
 $request = ServerRequestFactory::fromGlobals();
 
 try {
-    $result = $router->match($request);
+    $context = RequestContext::instance($request);
+    $router->setContext($context);
+
+    $result = $router->match($request->getUri()->getPath());
+
     foreach ($result->getAttributes() as $attribute => $value) {
         $request = $request->withAttribute($attribute, $value);
     }
