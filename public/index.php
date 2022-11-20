@@ -16,10 +16,7 @@ require 'vendor/autoload.php';
 
 $router = new Router();
 
-$router->get('home', '/', [Controllers\HelloController::class, 'index']);
-$router->get('about', '/about', [Controllers\AboutController::class, 'index']);
-$router->get('blog', '/blog', [Controllers\BlogController::class, 'index']);
-$router->get('blog_show', '/blog/{id}', [Controllers\BlogController::class, 'show'], ['id' => '\d+']);
+require 'config/routes.php';
 
 $resolver = new ActionResolver();
 
