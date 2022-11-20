@@ -9,14 +9,19 @@ use Framework\Http\Router\Router;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Finder\Finder;
 
 class Core implements HttpKernelInterface
 {
+    private string $controllersNamespace = 'App\Http\Controllers';
+
     public function handle(ServerRequestInterface $request, bool $catch = true): ResponseInterface
     {
         $router = new Router();
 
-        require 'config/routes.php';
+//        require 'config/routes.php';
+
+        $router->registerRoutesFromAttributes($this->getControllers());
 
         $resolver = new ActionResolver();
 
@@ -44,5 +49,20 @@ class Core implements HttpKernelInterface
         $response = $catch ? $tryCatchBlock($responseMethod) : $responseMethod($router, $request, $resolver);
 
         return $response->withHeader('X-Developer', 'Abdurakhmon Kodirov');
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getControllers(): array
+    {
+        $finder = new Finder();
+        $finder->files()->in(__DIR__ . '/../' . str_replace('\\', '/', $this->controllersNamespace))->name('*Controller.php');
+        $controllers = [];
+        foreach ($finder as $file) {
+            $controllers[] = $this->controllersNamespace . '\\' . str_replace('/', '\\', explode('.', $file->getRelativePathname())[0]);
+        }
+
+        return $controllers;
     }
 }

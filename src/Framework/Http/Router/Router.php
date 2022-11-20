@@ -5,6 +5,7 @@ namespace Framework\Http\Router;
 use Framework\Http\RequestContext;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\Router\Exception\RouteNotFoundException;
+use Framework\Http\Router\Attributes;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException as SymfonyRouteNotFoundException;
@@ -28,6 +29,25 @@ class Router implements Registrar
     public function addRoute($name, Route $route): Route
     {
         return $this->routes->add($name, $route);
+    }
+
+    public function registerRoutesFromAttributes(array $controllers): void
+    {
+        foreach ($controllers as $controller) {
+            $reflectionController = new \ReflectionClass($controller);
+
+            foreach ($reflectionController->getMethods() as $method) {
+                $attributes = $method->getAttributes(Attributes\Route::class, \ReflectionAttribute::IS_INSTANCEOF);
+
+                foreach ($attributes as $attribute) {
+                    /* @var $route Attributes\Route */
+                    $route = $attribute->newInstance();
+
+                    $this->add($route->name, $route->uri, [$method->getDeclaringClass()->getName(), $method->getName()], $route->methods, $route->tokens);
+                }
+            }
+        }
+
     }
 
     public function add($name, $uri, $action, array $methods, array $tokens = []): Route
