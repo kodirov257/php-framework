@@ -2,10 +2,11 @@
 
 namespace Framework\Http\Router;
 
+use Framework\Contracts\Http\Router\Registrar;
 use Framework\Http\RequestContext;
+use Framework\Http\Router\Attributes;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\Router\Exception\RouteNotFoundException;
-use Framework\Http\Router\Attributes;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException as SymfonyRouteNotFoundException;

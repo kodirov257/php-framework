@@ -1,9 +1,10 @@
 <?php
 
-namespace Framework\Http\Router;
+namespace Framework\Contracts\Http\Router;
 
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\Router\Exception\RouteNotFoundException;
+use Framework\Http\Router\Result;
 use Symfony\Component\Routing\Route;
 
 interface Registrar
