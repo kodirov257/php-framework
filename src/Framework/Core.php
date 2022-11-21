@@ -3,13 +3,14 @@
 namespace Framework;
 
 use Framework\Bootstrap\Config\ConfigurationLoader;
+use Framework\Contracts\Kernel\HttpKernelInterface;
 use Framework\Http\ActionResolver;
-use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\RequestContext;
+use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\Router\Router;
 use Laminas\Diactoros\Response\HtmlResponse;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Finder\Finder;
 
 class Core implements HttpKernelInterface

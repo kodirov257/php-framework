@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework;
+namespace Framework\Contracts\Kernel;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
