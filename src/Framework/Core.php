@@ -2,6 +2,7 @@
 
 namespace Framework;
 
+use Framework\Bootstrap\Config\ConfigurationLoader;
 use Framework\Http\ActionResolver;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\RequestContext;
@@ -18,10 +19,14 @@ class Core implements HttpKernelInterface
     public function handle(ServerRequestInterface $request, bool $catch = true): ResponseInterface
     {
         $router = new Router();
+        $configLoader = new ConfigurationLoader();
+        $configLoader->bootstrap(new Application(dirname(__DIR__, 2)));
 
-//        require 'config/routes.php';
-
-        $router->registerRoutesFromAttributes($this->getControllers());
+        if (config('app.route') === Router::ATTRIBUTE_TYPE) {
+            $router->registerRoutesFromAttributes($this->getControllers());
+        } else {
+            require 'config/routes.php';
+        }
 
         $resolver = new ActionResolver();
 
@@ -57,10 +62,10 @@ class Core implements HttpKernelInterface
     private function getControllers(): array
     {
         $finder = new Finder();
-        $finder->files()->in(__DIR__ . '/../' . str_replace('\\', '/', $this->controllersNamespace))->name('*Controller.php');
+        $finder->files()->in(__DIR__ . '/../' . str_replace('\\', DIRECTORY_SEPARATOR, $this->controllersNamespace))->name('*Controller.php');
         $controllers = [];
         foreach ($finder as $file) {
-            $controllers[] = $this->controllersNamespace . '\\' . str_replace('/', '\\', explode('.', $file->getRelativePathname())[0]);
+            $controllers[] = $this->controllersNamespace . '\\' . str_replace(DIRECTORY_SEPARATOR, '\\', explode('.', $file->getRelativePathname())[0]);
         }
 
         return $controllers;

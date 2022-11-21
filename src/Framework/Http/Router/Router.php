@@ -15,6 +15,9 @@ use Symfony\Component\Routing\Route;
 
 class Router implements Registrar
 {
+    const PHPFILE_TYPE = 'phpfile';
+    const ATTRIBUTE_TYPE = 'attribute';
+
     private RouteCollection $routes;
     private ?RequestContext $context;
 

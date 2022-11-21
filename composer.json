@@ -19,6 +19,9 @@
         "phpunit/phpunit": "^9.5"
     },
     "autoload": {
+        "files": [
+            "src/Framework/helpers.php"
+        ],
         "psr-4": {
             "App\\": "src/App/",
             "Framework\\": "src/Framework/"
