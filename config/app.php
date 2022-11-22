@@ -4,17 +4,17 @@ return [
     /*
      * Application name
      */
-    'name' => 'Venkod',
+    'name' => env('APP_NAME', 'Venkod'),
 
     /*
      * Application Timezone
      */
-    'timezone' => 'UTC',
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
 
     /*
      * Application Environment
      */
-    'env' => 'development',
+    'env' => env('APP_ENV', 'development'),
 
     /*
      | --------------------------------------------------------------

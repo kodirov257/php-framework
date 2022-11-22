@@ -12,6 +12,7 @@ use Laminas\Diactoros\Response\HtmlResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Finder\Finder;
+use Dotenv\Dotenv;
 
 class Core implements HttpKernelInterface
 {
@@ -19,9 +20,14 @@ class Core implements HttpKernelInterface
 
     public function handle(ServerRequestInterface $request, bool $catch = true): ResponseInterface
     {
+        $basePath = dirname(__DIR__, 2);
+        $dotenv = Dotenv::createImmutable($basePath);
+        $dotenv->load();
+
         $router = new Router();
+
         $configLoader = new ConfigurationLoader();
-        $configLoader->bootstrap(new Application(dirname(__DIR__, 2)));
+        $configLoader->bootstrap(new Application($basePath));
 
         if (config('app.route') === Router::ATTRIBUTE_TYPE) {
             $router->registerRoutesFromAttributes($this->getControllers());

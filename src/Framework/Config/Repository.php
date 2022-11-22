@@ -58,7 +58,7 @@ class Repository implements ConfigContract
         return $config;
     }
 
-    private static function getSingle(mixed $items, string|int|null $key, mixed $default = null): mixed
+    private static function getSingle(array $items, string|int|null $key, mixed $default = null): mixed
     {
         if (is_null($key)) {
             return $items;
@@ -69,14 +69,14 @@ class Repository implements ConfigContract
         }
 
         if (!str_contains($key, '.')) {
-            return $items[$key] ?? $default;
+            return $items[$key] ?? value($default);
         }
 
         foreach (explode('.', $key) as $segment) {
             if (is_array($items) && array_key_exists($segment, $items)) {
                 $items = $items[$segment];
             } else {
-                return $default;
+                return value($default);
             }
         }
 
