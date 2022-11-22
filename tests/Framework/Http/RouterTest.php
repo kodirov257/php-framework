@@ -3,53 +3,97 @@
 namespace Framework\Http;
 
 use Framework\Http\Router\Exception\RequestNotMatchedException;
-use Framework\Http\Router\RouteCollection;
-use Framework\Http\Router\SimpleRouter;
+use Framework\Http\Router\Router;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ServerRequestInterface;
 
 class RouterTest extends TestCase
 {
-    public function testCorrectMethod()
+    public function testCorrectMethod1()
     {
-        $routes = new RouteCollection();
+        $router = new Router();
 
-        $routes->get($nameGet = 'blog', '/blog', $handlerGet = 'handler_get');
-        $routes->post($namePost = 'blog_edit', '/blog', $handlerPost = 'handler_post');
+        $handlerGet = ['controller' => 'DefaultController', 'method' => 'handler_get'];
+        $handlerPost = ['controller' => 'DefaultController', 'method' => 'handler_post'];
 
-        $router = new SimpleRouter($routes);
+        $router->get($nameGet = 'blog', '/blog', [$handlerGet['controller'], $handlerGet['method']]);
+        $router->post($namePost = 'blog_edit', '/blog', [$handlerPost['controller'], $handlerPost['method']]);
 
-        $result = $router->match($this->buildRequest('GET', '/blog'));
+        $context = $this->buildRequestContext('GET', '/blog');
+        $router->setContext($context);
+        $result = $router->match($context->getPathInfo());
         self::assertEquals($nameGet, $result->getName());
         self::assertEquals($handlerGet, $result->getHandler());
 
-        $result = $router->match($this->buildRequest('POST', '/blog'));
+
+        $context = $this->buildRequestContext('POST', '/blog');
+        $router->setContext($context);
+        $result = $router->match($context->getPathInfo());
+        self::assertEquals($namePost, $result->getName());
+        self::assertEquals($handlerPost, $result->getHandler());
+    }
+
+    public function testCorrectMethod2()
+    {
+        $router = new Router();
+
+        $handlerGet = ['controller' => 'DefaultController', 'method' => 'handler_get'];
+        $handlerPost = ['controller' => 'DefaultController', 'method' => 'handler_post'];
+
+        $router->get($nameGet = 'blog', '/blog', $handlerGet);
+        $router->post($namePost = 'blog_edit', '/blog', $handlerPost);
+
+        $context = $this->buildRequestContext('GET', '/blog');
+        $router->setContext($context);
+        $result = $router->match($context->getPathInfo());
+        self::assertEquals($nameGet, $result->getName());
+        self::assertEquals($handlerGet, $result->getHandler());
+
+
+        $context = $this->buildRequestContext('POST', '/blog');
+        $router->setContext($context);
+        $result = $router->match($context->getPathInfo());
         self::assertEquals($namePost, $result->getName());
         self::assertEquals($handlerPost, $result->getHandler());
     }
 
     public function testMissingMethod()
     {
-        $routes = new RouteCollection();
+        $router = new Router();
 
-        $routes->post('blog', '/blog', 'handler_post');
-
-        $router = new SimpleRouter($routes);
+        $router->post('blog', '/blog', ['DefaultController', 'handler_post']);
 
         $this->expectException(RequestNotMatchedException::class);
-        $result = $router->match($this->buildRequest('DELETE', '/blog'));
+
+        $context = $this->buildRequestContext('DELETE', '/blog');
+        $router->setContext($context);
+        $router->match($context->getPathInfo());
+    }
+
+    public function testMissingPath()
+    {
+        $router = new Router();
+
+        $router->post('blog', '/blog', ['DefaultController', 'handler_post']);
+
+        $this->expectException(RequestNotMatchedException::class);
+
+        $context = $this->buildRequestContext('POST', '/blogs');
+        $router->setContext($context);
+        $router->match($context->getPathInfo());
     }
 
     public function testCorrectAttributes()
     {
-        $routes = new RouteCollection();
+        $router = new Router();
 
-        $routes->get($name = 'blog_show', '/blog/{id}', 'handler', ['id' => '\d+']);
+        $router->get($name = 'blog_show', '/blog/{id}', ['DefaultController', 'handler'], ['id' => '\d+']);
 
-        $router = new SimpleRouter($routes);
-
-        $result = $router->match($this->buildRequest('GET', '/blog/5'));
+        $context = $this->buildRequestContext('GET', '/blog/5');
+        $router->setContext($context);
+        $result = $router->match($context->getPathInfo());
 
         self::assertEquals($name, $result->getName());
         self::assertEquals(['id' => '5'], $result->getAttributes());
@@ -57,24 +101,27 @@ class RouterTest extends TestCase
 
     public function testIncorrectAttributes()
     {
-        $routes = new RouteCollection();
+        $router = new Router();
 
-        $routes->get($name = 'blog_show', '/blog/{id}', 'handler', ['id' => '\d+']);
+        $router->get('blog_show', '/blog/{id}', ['DefaultController', 'handler'], ['id' => '\d+']);
 
-        $router = new SimpleRouter($routes);
 
         $this->expectException(RequestNotMatchedException::class);
-        $router->match($this->buildRequest('GET', '/blog/slug'));
+        $context = $this->buildRequestContext('GET', '/blog/slug');
+        $router->setContext($context);
+        $router->match($context->getPathInfo());
     }
 
     public function testGenerate()
     {
-        $routes = new RouteCollection();
+        $router = new Router();
 
-        $routes->get('blog', '/blog', 'handler');
-        $routes->get('blog_show', '/blog/{id}', 'handler', ['id' => '\d+']);
+        $router->get('blog', '/blog', ['DefaultController', 'handler']);
+        $router->get('blog_show', '/blog/{id}', ['DefaultController', 'handler'], ['id' => '\d+']);
 
-        $router = new SimpleRouter($routes);
+        $context = $this->buildServerRequestContext(new ServerRequest());
+        $router->setContext($context);
+
 
         self::assertEquals('/blog', $router->generate('blog'));
         self::assertEquals('/blog/5', $router->generate('blog_show', ['id' => 5]));
@@ -82,20 +129,29 @@ class RouterTest extends TestCase
 
     public function testGenerateMissingAttributes()
     {
-        $routes = new RouteCollection();
+        $router = new Router();
 
-        $routes->get('blog_show', '/blog/{id}', 'handler', ['id' => '\d+']);
+        $router->get('blog_show', '/blog/{id}', ['DefaultController', 'handler'], ['id' => '\d+']);
 
-        $router = new SimpleRouter($routes);
+        $context = $this->buildServerRequestContext(new ServerRequest());
+        $router->setContext($context);
+
 
         $this->expectException(\InvalidArgumentException::class);
         $router->generate('blog_show', ['slug' => 'post']);
     }
 
-    private function buildRequest($method, $uri): ServerRequest
+    private function buildRequestContext($method, $uri): RequestContext
     {
-        return (new ServerRequest())
+        $request = (new ServerRequest())
             ->withMethod($method)
             ->withUri(new Uri($uri));
+
+        return $this->buildServerRequestContext($request);
+    }
+
+    private function buildServerRequestContext(ServerRequestInterface $request): RequestContext
+    {
+        return RequestContext::instance($request);
     }
 }

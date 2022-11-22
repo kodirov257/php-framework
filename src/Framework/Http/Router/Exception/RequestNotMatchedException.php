@@ -2,20 +2,18 @@
 
 namespace Framework\Http\Router\Exception;
 
-use Psr\Http\Message\ServerRequestInterface;
-
 class RequestNotMatchedException extends \LogicException
 {
-    private ServerRequestInterface $request;
+    private string $path;
 
-    public function __construct(ServerRequestInterface $request)
+    public function __construct(string $path)
     {
         parent::__construct('Matches not found.');
-        $this->request = $request;
+        $this->path = $path;
     }
 
-    public function getRequest(): ServerRequestInterface
+    public function getPath(): string
     {
-        return $this->request;
+        return $this->path;
     }
 }

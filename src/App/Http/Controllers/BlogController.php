@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Framework\Http\Router\Attributes\Get;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ServerRequestInterface;
 
 class BlogController
 {
+    #[Get('blog', '/blog')]
     public function index()
     {
         return new JsonResponse([
@@ -16,6 +18,7 @@ class BlogController
         ]);
     }
 
+    #[Get('blog_show', '/blog/{id}', ['id' => '\d+'])]
     public function show(ServerRequestInterface $request)
     {
         $id = $request->getAttribute('id');
