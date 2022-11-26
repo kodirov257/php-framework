@@ -8,6 +8,10 @@ class ActionResolver
 {
     public function resolve($handler, ServerRequestInterface $request)
     {
-        return \is_array($handler) ? (new $handler['controller']())->{$handler['method']}($request) : $handler;
+        $controller = \is_array($handler)
+            ? (!is_object($handler['controller']) ? new $handler['controller']() : $handler['controller'])
+            : $handler;
+
+        return $controller->{$handler['method']}($request);
     }
 }

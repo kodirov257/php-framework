@@ -104,6 +104,8 @@ class Router implements Registrar
                     } else {
                         $attributes[$key] = $parameter;
                     }
+                } elseif (is_object($parameter) && strpos(get_class($parameter), 'Controller')) {
+                    $handler['controller'] = $parameter;
                 } else {
                     if (strpos($parameter, 'Controller')) {
                         $handler['controller'] = $parameter;
