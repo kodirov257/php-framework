@@ -9,3 +9,5 @@ $router->get('about', '/about', [Controllers\AboutController::class, 'index']);
 
 $router->get('blog', '/blog', [Controllers\BlogController::class, 'index']);
 $router->get('blog_show', '/blog/{id}', [Controllers\BlogController::class, 'show'], ['id' => '\d+']);
+
+$router->get('cabinet', '/cabinet', [Controllers\CabinetController::class, 'index']);
