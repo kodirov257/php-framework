@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Framework\Http\Controller;
 use Framework\Http\Router\Attributes\Get;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Psr\Http\Message\ServerRequestInterface;
 
-class HelloController
+class HelloController extends Controller
 {
     #[Get('home', '/')]
     public function index(ServerRequestInterface $request)

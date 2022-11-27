@@ -14,4 +14,4 @@ $router->get('about', '/about', [Controllers\AboutController::class, 'index']);
 $router->get('blog', '/blog', [Controllers\BlogController::class, 'index']);
 $router->get('blog_show', '/blog/{id}', [Controllers\BlogController::class, 'show'], ['id' => '\d+']);
 
-$router->get('cabinet', '/cabinet', [new Controllers\CabinetController($params['users']), 'index']);
+$router->get('cabinet', '/cabinet', new Controllers\BasicAuthControllerDecorator(new Controllers\CabinetController(), $params['users'], 'index'));

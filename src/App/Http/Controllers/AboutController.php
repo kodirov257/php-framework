@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Framework\Http\Controller;
 use Framework\Http\Router\Attributes\Get;
 use Laminas\Diactoros\Response\HtmlResponse;
 
-class AboutController
+class AboutController extends Controller
 {
     #[Get('about', '/about')]
     public function index()

@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Framework\Http\Controller;
 use Framework\Http\Router\Attributes\Get;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ServerRequestInterface;
 
-class BlogController
+class BlogController extends Controller
 {
     #[Get('blog', '/blog')]
     public function index()
