@@ -20,10 +20,6 @@ class ActionResolver
             return $controller->callAction($handler['method'], $request);
         }
 
-        if (strpos(get_class($controller), 'Decorator')) {
-            return $controller($request);
-        }
-
         return $controller->{$handler['method']}($request);
     }
 }

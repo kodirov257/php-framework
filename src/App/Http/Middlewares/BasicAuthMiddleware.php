@@ -1,24 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Middlewares;
 
 use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ServerRequestInterface;
 
-class BasicAuthControllerDecorator
+class BasicAuthMiddleware
 {
-    private object $next;
-    private array $users;
-    private string $method;
+    public const ATTRIBUTE = '_user';
 
-    public function __construct(object $next, array $users, string $method)
+    private array $users;
+
+    public function __construct(array $users)
     {
-        $this->next = $next;
         $this->users = $users;
-        $this->method = $method;
     }
 
-    public function __invoke(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request, callable $next)
     {
         $username = $request->getServerParams()['PHP_AUTH_USER'] ?? null;
         $password = $request->getServerParams()['PHP_AUTH_PW'] ?? null;
@@ -26,7 +24,7 @@ class BasicAuthControllerDecorator
         if (!empty($username) && !empty($password)) {
             foreach ($this->users as $name => $pass) {
                 if ($name === $username && $pass === $password) {
-                    return ($this->next)($this->method, $request->withAttribute('username', $username));
+                    return ($next)($request->withAttribute(self::ATTRIBUTE, $username));
                 }
             }
         }

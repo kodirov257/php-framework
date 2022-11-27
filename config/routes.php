@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers;
+use App\Http\Middlewares;
 use Framework\Http\Router\Router;
+use Psr\Http\Message\ServerRequestInterface;
 
 $params = [
     'users' => ['admin' => 'password'],
@@ -14,4 +16,11 @@ $router->get('about', '/about', [Controllers\AboutController::class, 'index']);
 $router->get('blog', '/blog', [Controllers\BlogController::class, 'index']);
 $router->get('blog_show', '/blog/{id}', [Controllers\BlogController::class, 'show'], ['id' => '\d+']);
 
-$router->get('cabinet', '/cabinet', new Controllers\BasicAuthControllerDecorator(new Controllers\CabinetController(), $params['users'], 'index'));
+$router->get('cabinet', '/cabinet', function (ServerRequestInterface $request) use ($params) {
+    $auth = new Middlewares\BasicAuthMiddleware($params['users']);
+    $cabinet = new Controllers\CabinetController();
+
+    return $auth($request, function (ServerRequestInterface $request) use ($cabinet) {
+        return $cabinet($request, 'index');
+    });
+});
