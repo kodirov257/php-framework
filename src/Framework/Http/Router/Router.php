@@ -95,7 +95,9 @@ class Router implements Registrar
             $attributes = [];
             foreach ($parameters as $key => $parameter) {
                 if (!\is_int($key)) {
-                    if ($key === 'controller') {
+                    if ($key === 'middleware') {
+                        $handler['middleware'] = $parameter;
+                    } else if ($key === 'controller') {
                         $handler['controller'] = $parameter;
                     } else if ($key === 'method') {
                         $handler['method'] = $parameter;
@@ -104,8 +106,14 @@ class Router implements Registrar
                     } else {
                         $attributes[$key] = $parameter;
                     }
-                } elseif (is_object($parameter) && strpos(get_class($parameter), 'Controller')) {
-                    $handler['controller'] = $parameter;
+                } else if (\is_callable($parameter)) {
+                    $handler['middleware'] = $parameter;
+                } elseif (\is_object($parameter)) {
+                    if (strpos(get_class($parameter), 'Controller')) {
+                        $handler['controller'] = $parameter;
+                    } else if (strpos(get_class($parameter), 'Middleware')) {
+                        $handler['middleware'] = $parameter;
+                    }
                 } else {
                     if (strpos($parameter, 'Controller')) {
                         $handler['controller'] = $parameter;

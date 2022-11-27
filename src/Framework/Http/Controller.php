@@ -15,7 +15,7 @@ abstract class Controller
      * @param ServerRequestInterface $request
      * @return Response
      */
-    public function __invoke(string $method, ServerRequestInterface $request): Response
+    public function __invoke(ServerRequestInterface $request, string $method): Response
     {
         return $this->callAction($method, $request);
     }

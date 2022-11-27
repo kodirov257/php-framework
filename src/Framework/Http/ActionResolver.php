@@ -8,6 +8,10 @@ class ActionResolver
 {
     public function resolve($handler, ServerRequestInterface $request)
     {
+        if (isset($handler['middleware']) && !empty($handler['middleware'])) {
+            return $handler['middleware']($request);
+        }
+
         $controller = \is_array($handler)
             ? (!is_object($handler['controller']) ? new $handler['controller']() : $handler['controller'])
             : $handler;
