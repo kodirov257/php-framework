@@ -12,6 +12,14 @@ class ActionResolver
             ? (!is_object($handler['controller']) ? new $handler['controller']() : $handler['controller'])
             : $handler;
 
+        if (method_exists($controller, 'callAction')) {
+            return $controller->callAction($handler['method'], $request);
+        }
+
+        if (strpos(get_class($controller), 'Decorator')) {
+            return $controller($request);
+        }
+
         return $controller->{$handler['method']}($request);
     }
 }

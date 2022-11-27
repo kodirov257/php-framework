@@ -56,7 +56,7 @@ class Router implements Registrar
 
     public function add($name, $uri, $action, array $methods, array $tokens = []): Route
     {
-        return $this->addRoute($name, (new Route($uri, $action, $tokens))->setMethods($methods));
+        return $this->addRoute($name, (new Route($uri, !is_array($action) ? [$action] : $action, $tokens))->setMethods($methods));
     }
 
     public function get($name, $uri, $action, $tokens = []): Route
