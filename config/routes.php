@@ -17,10 +17,13 @@ $router->get('blog', '/blog', [Controllers\BlogController::class, 'index']);
 $router->get('blog_show', '/blog/{id}', [Controllers\BlogController::class, 'show'], ['id' => '\d+']);
 
 $router->get('cabinet', '/cabinet', function (ServerRequestInterface $request) use ($params) {
+    $profiler = new Middlewares\ProfilerMiddleware();
     $auth = new Middlewares\BasicAuthMiddleware($params['users']);
     $cabinet = new Controllers\CabinetController();
 
-    return $auth($request, function (ServerRequestInterface $request) use ($cabinet) {
-        return $cabinet($request, 'index');
+    return $profiler($request, function (ServerRequestInterface $request) use ($auth, $cabinet) {
+        return $auth($request, function (ServerRequestInterface $request) use ($cabinet) {
+            return $cabinet($request, 'index');
+        });
     });
 });
