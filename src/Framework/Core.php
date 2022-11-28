@@ -2,9 +2,12 @@
 
 namespace Framework;
 
+use App\Http\Middlewares;
 use Framework\Bootstrap\Config\ConfigurationLoader;
 use Framework\Contracts\Kernel\HttpKernelInterface;
 use Framework\Http\ActionResolver;
+use Framework\Http\MiddlewareResolver;
+use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\RequestContext;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\Router\Router;
@@ -35,9 +38,10 @@ class Core implements HttpKernelInterface
             require 'config/routes.php';
         }
 
-        $resolver = new ActionResolver();
+        $actionResolver = new ActionResolver();
+        $middlewareResolver = new MiddlewareResolver();
 
-        $responseMethod = function (Router $router, ServerRequestInterface $request, ActionResolver $resolver): ResponseInterface {
+        $responseMethod = function (Router $router, ServerRequestInterface $request) use ($actionResolver, $middlewareResolver): ResponseInterface {
             $context = RequestContext::instance($request);
             $router->setContext($context);
 
@@ -47,18 +51,36 @@ class Core implements HttpKernelInterface
                 $request = $request->withAttribute($attribute, $value);
             }
 
-            return $resolver->resolve($result->getHandler(), $request);
+            $handler = $result->getHandler();
+            $pipeline = new Pipeline();
+            foreach ($handler->getMiddlewares() as $middleware) {
+                $pipeline->pipe($middlewareResolver->resolve($middleware));
+            }
+
+            $controller = $actionResolver->resolve($handler);
+            $method = $handler->getMethod();
+
+            $pipeline->pipe(function ($request) use ($controller, $method) {
+                if (method_exists($controller, 'callAction')) {
+                    return $controller->callAction($method, $request);
+                }
+
+                return $controller->{$method}($request);
+            });
+
+            return $pipeline($request, new Middlewares\NotFoundHandler());
         };
 
-        $tryCatchBlock = function (callable $callback) use ($router, $request, $resolver): ResponseInterface {
+        $tryCatchBlock = function (callable $callback) use ($router, $request, $actionResolver): ResponseInterface {
             try {
-                return $callback($router, $request, $resolver);
+                return $callback($router, $request);
             } catch (RequestNotMatchedException $e) {
-                return new HtmlResponse('Undefined page', 404);
+                $handler = new Middlewares\NotFoundHandler();
+                return $handler($request);
             }
         };
 
-        $response = $catch ? $tryCatchBlock($responseMethod) : $responseMethod($router, $request, $resolver);
+        $response = $catch ? $tryCatchBlock($responseMethod) : $responseMethod($router, $request);
 
         return $response->withHeader('X-Developer', 'Abdurakhmon Kodirov');
     }

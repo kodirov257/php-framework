@@ -2,24 +2,12 @@
 
 namespace Framework\Http;
 
-use Psr\Http\Message\ServerRequestInterface;
+use Framework\Http\Router\RouterHandler;
 
 class ActionResolver
 {
-    public function resolve($handler, ServerRequestInterface $request)
+    public function resolve(RouterHandler $handler)
     {
-        if (isset($handler['middleware']) && !empty($handler['middleware'])) {
-            return $handler['middleware']($request);
-        }
-
-        $controller = \is_array($handler)
-            ? (!is_object($handler['controller']) ? new $handler['controller']() : $handler['controller'])
-            : $handler;
-
-        if (method_exists($controller, 'callAction')) {
-            return $controller->callAction($handler['method'], $request);
-        }
-
-        return $controller->{$handler['method']}($request);
+        return !is_object($handler->getController()) ? new ($handler->getController())() : $handler->getController();
     }
 }

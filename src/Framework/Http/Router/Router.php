@@ -5,6 +5,7 @@ namespace Framework\Http\Router;
 use Framework\Contracts\Http\Router\Registrar;
 use Framework\Http\RequestContext;
 use Framework\Http\Router\Attributes;
+use Framework\Http\Router\Exception\InsufficientMatchParametersException;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\Router\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -21,6 +22,7 @@ class Router implements Registrar
 
     private RouteCollection $routes;
     private ?RequestContext $context;
+    private RouterHandler $routerHandler;
 
     public static array $verbs = ['GET', 'POST', 'PUT', 'DELETE'];
 
@@ -28,6 +30,7 @@ class Router implements Registrar
     {
         $this->routes = new RouteCollection;
         $this->context = $context;
+        $this->routerHandler = new RouterHandler();
     }
 
     public function addRoute($name, Route $route): Route
@@ -90,43 +93,56 @@ class Router implements Registrar
         try {
             $parameters = $matcher->match($path);
 
-            $handler = [];
             $routeName = '';
             $attributes = [];
             foreach ($parameters as $key => $parameter) {
                 if (!\is_int($key)) {
                     if ($key === 'middleware') {
-                        $handler['middleware'] = $parameter;
+                        $this->routerHandler->setMiddlewares($parameter);
+                    } else if ($key === 'action') {
+                        $this->matchAction($parameter);
                     } else if ($key === 'controller') {
-                        $handler['controller'] = $parameter;
+                        $this->routerHandler->setController($parameter);
                     } else if ($key === 'method') {
-                        $handler['method'] = $parameter;
+                        $this->routerHandler->setMethod($parameter);
                     } else if ($key === '_route') {
                         $routeName = $parameter;
                     } else {
                         $attributes[$key] = $parameter;
                     }
                 } else if (\is_callable($parameter)) {
-                    $handler['middleware'] = $parameter;
+                    $this->routerHandler->setAction($parameter);
                 } elseif (\is_object($parameter)) {
                     if (strpos(get_class($parameter), 'Controller')) {
-                        $handler['controller'] = $parameter;
-                    } else if (strpos(get_class($parameter), 'Middleware')) {
-                        $handler['middleware'] = $parameter;
+                        $this->routerHandler->setController($parameter);
+                    } else {
+                        $this->routerHandler->setMiddlewares($parameter);
                     }
                 } else {
-                    if (strpos($parameter, 'Controller')) {
-                        $handler['controller'] = $parameter;
-                    } else {
-                        $handler['method'] = $parameter;
-                    }
+                    $this->matchAction($parameter);
                 }
-
             }
 
-            return new Result($routeName, $handler, $attributes);
+            return new Result($routeName, $this->routerHandler, $attributes);
         } catch (ResourceNotFoundException|MethodNotAllowedException $e) {
             throw new RequestNotMatchedException($path);
+        }
+    }
+
+    private function matchAction(mixed $parameter)
+    {
+        if (is_array($parameter)) {
+            foreach ($parameter as $value) {
+                $this->matchAction($value);
+            }
+        } else if (\is_callable($parameter)) {
+            $this->routerHandler->setAction($parameter);
+        } else if (strpos($parameter, 'Controller')) {
+            $this->routerHandler->setController($parameter);
+        } else if (is_string($parameter)) {
+            $this->routerHandler->setMethod($parameter);
+        } else {
+            throw new InsufficientMatchParametersException($parameter);
         }
     }
 
