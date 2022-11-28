@@ -16,9 +16,6 @@ $router->get('blog', '/blog', [Controllers\BlogController::class, 'index']);
 $router->get('blog_show', '/blog/{id}', [Controllers\BlogController::class, 'show'], ['id' => '\d+']);
 
 $router->get('cabinet', '/cabinet', [
-    'middleware' => [
-        Middlewares\ProfilerMiddleware::class,
-        new Middlewares\BasicAuthMiddleware($params['users'])
-    ],
+    'middleware' => [new Middlewares\BasicAuthMiddleware($params['users'])],
     'action' => [Controllers\CabinetController::class, 'index'],
 ]);

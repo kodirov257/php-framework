@@ -40,8 +40,11 @@ class Core implements HttpKernelInterface
 
         $actionResolver = new ActionResolver();
         $middlewareResolver = new MiddlewareResolver();
+        $pipeline = new Pipeline();
 
-        $responseMethod = function (Router $router, ServerRequestInterface $request) use ($actionResolver, $middlewareResolver): ResponseInterface {
+        $pipeline->pipe($middlewareResolver->resolve(Middlewares\ProfilerMiddleware::class));
+
+        $responseMethod = function (Router $router, ServerRequestInterface $request) use ($actionResolver, $middlewareResolver, $pipeline): ResponseInterface {
             $context = RequestContext::instance($request);
             $router->setContext($context);
 
@@ -52,7 +55,6 @@ class Core implements HttpKernelInterface
             }
 
             $handler = $result->getHandler();
-            $pipeline = new Pipeline();
             foreach ($handler->getMiddlewares() as $middleware) {
                 $pipeline->pipe($middlewareResolver->resolve($middleware));
             }
@@ -71,7 +73,7 @@ class Core implements HttpKernelInterface
             return $pipeline($request, new Middlewares\NotFoundHandler());
         };
 
-        $tryCatchBlock = function (callable $callback) use ($router, $request, $actionResolver): ResponseInterface {
+        $tryCatchBlock = function (callable $callback) use ($router, $request): ResponseInterface {
             try {
                 return $callback($router, $request);
             } catch (RequestNotMatchedException $e) {
