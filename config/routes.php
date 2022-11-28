@@ -3,6 +3,7 @@
 use App\Http\Controllers;
 use App\Http\Middlewares;
 use Framework\Http\Router\Router;
+use Laminas\Diactoros\Response\HtmlResponse;
 
 $params = [
     'users' => ['admin' => 'password'],
@@ -19,3 +20,7 @@ $router->get('cabinet', '/cabinet', [
     'middleware' => [new Middlewares\BasicAuthMiddleware($params['users'])],
     'action' => [Controllers\CabinetController::class, 'index'],
 ]);
+
+$router->get('contact', '/contact', function () {
+    return new HtmlResponse('Contact page.');
+});

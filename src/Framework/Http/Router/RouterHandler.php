@@ -45,7 +45,7 @@ class RouterHandler
         $this->controller = $controller;
     }
 
-    public function getController(): object|string
+    public function getController(): object|string|null
     {
         return $this->controller;
     }
@@ -55,7 +55,7 @@ class RouterHandler
         $this->method = $method;
     }
 
-    public function getMethod(): string
+    public function getMethod(): string|null
     {
         return $this->method;
     }
@@ -75,7 +75,7 @@ class RouterHandler
         $this->action = $action;
     }
 
-    public function getAction(): callable
+    public function getAction(): callable|null
     {
         return $this->action;
     }
