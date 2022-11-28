@@ -11,7 +11,6 @@ use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\RequestContext;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\Router\Router;
-use Laminas\Diactoros\Response\HtmlResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Finder\Finder;
@@ -23,14 +22,9 @@ class Core implements HttpKernelInterface
 
     public function handle(ServerRequestInterface $request, bool $catch = true): ResponseInterface
     {
-        $basePath = dirname(__DIR__, 2);
-        $dotenv = Dotenv::createImmutable($basePath);
-        $dotenv->load();
+        $this->setConfiguration();
 
         $router = new Router();
-
-        $configLoader = new ConfigurationLoader();
-        $configLoader->bootstrap(new Application($basePath));
 
         if (config('app.route') === Router::ATTRIBUTE_TYPE) {
             $router->registerRoutesFromAttributes($this->getControllers());
@@ -100,5 +94,15 @@ class Core implements HttpKernelInterface
         }
 
         return $controllers;
+    }
+
+    private function setConfiguration(): void
+    {
+        $basePath = dirname(__DIR__, 2);
+        $dotenv = Dotenv::createImmutable($basePath);
+        $dotenv->load();
+
+        $configLoader = new ConfigurationLoader();
+        $configLoader->bootstrap(new Application($basePath));
     }
 }
