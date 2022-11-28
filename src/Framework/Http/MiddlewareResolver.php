@@ -2,13 +2,18 @@
 
 namespace Framework\Http;
 
-use Framework\Http\Router\RouterHandler;
 use Psr\Http\Message\ServerRequestInterface;
 
 class MiddlewareResolver
 {
     public function resolve(mixed $handler): callable
     {
-        return is_string($handler) ? new $handler : $handler;
+        if (\is_string($handler)) {
+            return function (ServerRequestInterface $request, callable $next) use ($handler) {
+                $object = new $handler();
+                return $object($request, $next);
+            };
+        }
+        return $handler;
     }
 }

@@ -57,6 +57,10 @@ class Core implements HttpKernelInterface
             $method = $handler->getMethod();
 
             $pipeline->pipe(function ($request) use ($controller, $method) {
+                if (is_callable($controller)) {
+                    return $controller($request);
+                }
+
                 if (method_exists($controller, 'callAction')) {
                     return $controller->callAction($method, $request);
                 }
