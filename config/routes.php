@@ -3,6 +3,7 @@
 use App\Http\Controllers;
 use App\Http\Middlewares;
 use Framework\Http\Router\Router;
+use Framework\Http\Pipeline\Pipeline;
 use Psr\Http\Message\ServerRequestInterface;
 
 $params = [
@@ -17,13 +18,14 @@ $router->get('blog', '/blog', [Controllers\BlogController::class, 'index']);
 $router->get('blog_show', '/blog/{id}', [Controllers\BlogController::class, 'show'], ['id' => '\d+']);
 
 $router->get('cabinet', '/cabinet', function (ServerRequestInterface $request) use ($params) {
-    $profiler = new Middlewares\ProfilerMiddleware();
-    $auth = new Middlewares\BasicAuthMiddleware($params['users']);
+    $pipeline = new Pipeline();
+
+    $pipeline->pipe(new Middlewares\ProfilerMiddleware());
+    $pipeline->pipe(new Middlewares\BasicAuthMiddleware($params['users']));
+
     $cabinet = new Controllers\CabinetController();
 
-    return $profiler($request, function (ServerRequestInterface $request) use ($auth, $cabinet) {
-        return $auth($request, function (ServerRequestInterface $request) use ($cabinet) {
-            return $cabinet($request, 'index');
-        });
+    return $pipeline($request, function (ServerRequestInterface $request) use ($cabinet) {
+        return $cabinet($request, 'index');
     });
 });
