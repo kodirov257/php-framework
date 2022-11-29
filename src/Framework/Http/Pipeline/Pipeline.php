@@ -21,7 +21,7 @@ class Pipeline
         return $delegate($request);
     }
 
-    public function pipe(callable $middleware): void
+    public function pipe($middleware): void
     {
         $this->queue->enqueue($middleware);
     }

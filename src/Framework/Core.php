@@ -2,6 +2,7 @@
 
 namespace Framework;
 
+use App\Http\Application;
 use App\Http\Middlewares;
 use Framework\Bootstrap\Config\ConfigurationLoader;
 use Framework\Contracts\Kernel\HttpKernelInterface;
@@ -34,11 +35,11 @@ class Core implements HttpKernelInterface
 
         $actionResolver = new ActionResolver();
         $middlewareResolver = new MiddlewareResolver();
-        $pipeline = new Pipeline();
+        $app = new Application($middlewareResolver);
 
-        $pipeline->pipe($middlewareResolver->resolve(Middlewares\ProfilerMiddleware::class));
+        $app->pipe(Middlewares\ProfilerMiddleware::class);
 
-        $responseMethod = function (Router $router, ServerRequestInterface $request) use ($actionResolver, $middlewareResolver, $pipeline): ResponseInterface {
+        $responseMethod = function (Router $router, ServerRequestInterface $request) use ($actionResolver, $middlewareResolver, $app): ResponseInterface {
             $context = RequestContext::instance($request);
             $router->setContext($context);
 
@@ -49,12 +50,12 @@ class Core implements HttpKernelInterface
             }
 
             $handler = $result->getHandler();
-            $pipeline->pipe($middlewareResolver->resolve($handler->getMiddlewares()));
+            $app->pipe($middlewareResolver->resolve($handler->getMiddlewares()));
 
             $controller = $actionResolver->resolve($handler);
             $method = $handler->getMethod();
 
-            $pipeline->pipe(function ($request) use ($controller, $method) {
+            $app->pipe(function ($request) use ($controller, $method) {
                 if ($controller instanceof \Closure) {
                     return $controller($request);
                 }
@@ -66,7 +67,7 @@ class Core implements HttpKernelInterface
                 return $controller->{$method}($request);
             });
 
-            return $pipeline($request, new Middlewares\NotFoundHandler());
+            return $app($request, new Middlewares\NotFoundHandler());
         };
 
         $tryCatchBlock = function (callable $callback) use ($router, $request): ResponseInterface {
