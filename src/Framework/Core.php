@@ -49,16 +49,7 @@ class Core implements HttpKernelInterface
             }
 
             $handler = $result->getHandler();
-            if (is_array($handler->getMiddlewares())) {
-                $middleware = new Pipeline();
-                foreach ($handler->getMiddlewares() as $item) {
-                    $middleware->pipe($middlewareResolver->resolve($item));
-                }
-            } else {
-                $middleware = $middlewareResolver->resolve($handler->getMiddlewares());
-            }
-
-            $pipeline->pipe($middleware);
+            $pipeline->pipe($middlewareResolver->resolve($handler->getMiddlewares()));
 
             $controller = $actionResolver->resolve($handler);
             $method = $handler->getMethod();
