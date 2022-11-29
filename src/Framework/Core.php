@@ -37,6 +37,7 @@ class Core implements HttpKernelInterface
         $middlewareResolver = new MiddlewareResolver();
         $app = new Application($middlewareResolver, new Middlewares\NotFoundHandler());
 
+        $app->pipe(Middlewares\CredentialsMiddleware::class);
         $app->pipe(Middlewares\ProfilerMiddleware::class);
 
         $responseMethod = function (Router $router, ServerRequestInterface $request) use ($actionResolver, $middlewareResolver, $app): ResponseInterface {
