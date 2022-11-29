@@ -5,10 +5,7 @@ use App\Http\Middlewares;
 use Framework\Http\Router\Router;
 use Laminas\Diactoros\Response\HtmlResponse;
 
-$params = [
-    'users' => ['admin' => 'password'],
-];
-
+/** @var $params array */
 /** @var $router Router */
 $router->get('home', '/', [Controllers\HelloController::class, 'index']);
 $router->get('about', '/about', [Controllers\AboutController::class, 'index']);

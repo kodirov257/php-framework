@@ -27,6 +27,11 @@ class Core implements HttpKernelInterface
 
         $router = new Router();
 
+        $params = [
+            'debug' => true,
+            'users' => ['admin' => 'password'],
+        ];
+
         if (config('app.route') === Router::ATTRIBUTE_TYPE) {
             $router->registerRoutesFromAttributes($this->getControllers());
         } else {
@@ -37,6 +42,7 @@ class Core implements HttpKernelInterface
         $middlewareResolver = new MiddlewareResolver();
         $app = new Application($middlewareResolver, new Middlewares\NotFoundHandler());
 
+        $app->pipe(new Middlewares\ErrorHandlerMiddleware($params['debug']));
         $app->pipe(Middlewares\CredentialsMiddleware::class);
         $app->pipe(Middlewares\ProfilerMiddleware::class);
 
