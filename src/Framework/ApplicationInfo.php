@@ -4,7 +4,7 @@ namespace Framework;
 
 use Framework\Contracts\Application as ApplicationContract;
 
-class Application implements ApplicationContract
+class ApplicationInfo implements ApplicationContract
 {
     /**
      * The current globally available application (if any).

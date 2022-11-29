@@ -105,6 +105,6 @@ class Core implements HttpKernelInterface
         $dotenv->load();
 
         $configLoader = new ConfigurationLoader();
-        $configLoader->bootstrap(new Application($basePath));
+        $configLoader->bootstrap(new ApplicationInfo($basePath));
     }
 }
