@@ -35,7 +35,7 @@ class Core implements HttpKernelInterface
 
         $actionResolver = new ActionResolver();
         $middlewareResolver = new MiddlewareResolver();
-        $app = new Application($middlewareResolver);
+        $app = new Application($middlewareResolver, new Middlewares\NotFoundHandler());
 
         $app->pipe(Middlewares\ProfilerMiddleware::class);
 
@@ -67,7 +67,7 @@ class Core implements HttpKernelInterface
                 return $controller->{$method}($request);
             });
 
-            return $app($request, new Middlewares\NotFoundHandler());
+            return $app->run($request);
         };
 
         $tryCatchBlock = function (callable $callback) use ($router, $request): ResponseInterface {
