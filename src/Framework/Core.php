@@ -2,7 +2,6 @@
 
 namespace Framework;
 
-use App\Http\Middlewares;
 use Framework;
 use Framework\Bootstrap\Config\ConfigurationLoader;
 use Framework\Contracts\Kernel\HttpKernelInterface;
@@ -39,11 +38,12 @@ class Core implements HttpKernelInterface
 
         $actionResolver = new ActionResolver();
         $middlewareResolver = new MiddlewareResolver();
-        $app = new Application($middlewareResolver, new Middlewares\NotFoundHandler());
+        $notFoundHandler = config('app.not_found_handler') ?? Framework\Http\Middleware\NotFoundHandler::class;
+        $app = new Application($middlewareResolver, new $notFoundHandler($request));
 
-        $app->pipe(new Middlewares\ErrorHandlerMiddleware($params['debug']));
-        $app->pipe(Middlewares\CredentialsMiddleware::class);
-        $app->pipe(Middlewares\ProfilerMiddleware::class);
+        foreach (config('app.middlewares') as $middleware) {
+            $app->pipe($middleware);
+        }
         $app->pipe(new Framework\Http\Middleware\RouteMiddleware($router));
         $app->pipe(new Framework\Http\Middleware\DispatchMiddleware($middlewareResolver));
         $app->pipe(new Framework\Http\Middleware\DispatchRouteMiddleware($actionResolver));
