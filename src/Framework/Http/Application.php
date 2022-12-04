@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http;
+namespace Framework\Http;
 
-use Framework\Http\MiddlewareResolver;
 use Framework\Http\Pipeline\Pipeline;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

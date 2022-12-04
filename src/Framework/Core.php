@@ -2,15 +2,15 @@
 
 namespace Framework;
 
-use App\Http\Application;
 use App\Http\Middlewares;
+use Framework;
 use Framework\Bootstrap\Config\ConfigurationLoader;
 use Framework\Contracts\Kernel\HttpKernelInterface;
 use Framework\Http\ActionResolver;
+use Framework\Http\Application;
 use Framework\Http\Controller;
 use Framework\Http\MiddlewareResolver;
 use Framework\Http\Router\Router;
-use Framework;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Finder\Finder;
