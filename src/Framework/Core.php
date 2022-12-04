@@ -47,7 +47,7 @@ class Core implements HttpKernelInterface
         $app->pipe(Middlewares\CredentialsMiddleware::class);
         $app->pipe(Middlewares\ProfilerMiddleware::class);
 
-        $responseMethod = function (Router $router, ServerRequestInterface $request) use ($actionResolver, $middlewareResolver, $app): ResponseInterface {
+        try {
             $context = RequestContext::instance($request);
             $router->setContext($context);
 
@@ -67,19 +67,8 @@ class Core implements HttpKernelInterface
                 return $this->runAction($controller, $method, $request);
             });
 
-            return $app->run($request);
-        };
-
-        $tryCatchBlock = function (callable $callback) use ($router, $request): ResponseInterface {
-            try {
-                return $callback($router, $request);
-            } catch (RequestNotMatchedException $e) {
-                $handler = new Middlewares\NotFoundHandler();
-                return $handler($request);
-            }
-        };
-
-        $response = $catch ? $tryCatchBlock($responseMethod) : $responseMethod($router, $request);
+        } catch (RequestNotMatchedException $e) {}
+        $response = $app->run($request);
 
         return $response->withHeader('X-Developer', 'Abdurakhmon Kodirov');
     }
