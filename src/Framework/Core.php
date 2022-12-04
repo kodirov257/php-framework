@@ -7,6 +7,7 @@ use App\Http\Middlewares;
 use Framework\Bootstrap\Config\ConfigurationLoader;
 use Framework\Contracts\Kernel\HttpKernelInterface;
 use Framework\Http\ActionResolver;
+use Framework\Http\Controller;
 use Framework\Http\MiddlewareResolver;
 use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\RequestContext;
@@ -62,16 +63,8 @@ class Core implements HttpKernelInterface
             $controller = $actionResolver->resolve($handler);
             $method = $handler->getMethod();
 
-            $app->pipe(function ($request) use ($controller, $method) {
-                if ($controller instanceof \Closure) {
-                    return $controller($request);
-                }
-
-                if (method_exists($controller, 'callAction')) {
-                    return $controller->callAction($method, $request);
-                }
-
-                return $controller->{$method}($request);
+            $app->pipe(function (ServerRequestInterface $request) use ($controller, $method) {
+                return $this->runAction($controller, $method, $request);
             });
 
             return $app->run($request);
@@ -114,5 +107,26 @@ class Core implements HttpKernelInterface
 
         $configLoader = new ConfigurationLoader();
         $configLoader->bootstrap(new ApplicationInfo($basePath));
+    }
+
+    /**
+     * Run action in controller.
+     *
+     * @param callable|\Closure|Controller|object $controller
+     * @param string $method
+     * @param ServerRequestInterface $request
+     * @return mixed
+     */
+    private function runAction(mixed $controller, string $method, ServerRequestInterface $request): mixed
+    {
+        if ($controller instanceof \Closure) {
+            return $controller($request);
+        }
+
+        if (method_exists($controller, 'callAction')) {
+            return $controller->callAction($method, $request);
+        }
+
+        return $controller->{$method}($request);
     }
 }

@@ -6,6 +6,10 @@ use Framework\Http\Router\RouterHandler;
 
 class ActionResolver
 {
+    /**
+     * @param RouterHandler $handler
+     * @return callable|\Closure|Controller|object
+     */
     public function resolve(RouterHandler $handler)
     {
         if ($handler->getAction()) {
