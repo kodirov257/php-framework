@@ -9,7 +9,6 @@ use Framework\Contracts\Kernel\HttpKernelInterface;
 use Framework\Http\ActionResolver;
 use Framework\Http\Controller;
 use Framework\Http\MiddlewareResolver;
-use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\RequestContext;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\Router\Router;
@@ -58,7 +57,7 @@ class Core implements HttpKernelInterface
             }
 
             $handler = $result->getHandler();
-            $app->pipe($middlewareResolver->resolve($handler->getMiddlewares()));
+            $app->pipe($handler->getMiddlewares());
 
             $controller = $actionResolver->resolve($handler);
             $method = $handler->getMethod();
