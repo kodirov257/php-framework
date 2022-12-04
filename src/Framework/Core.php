@@ -9,9 +9,8 @@ use Framework\Contracts\Kernel\HttpKernelInterface;
 use Framework\Http\ActionResolver;
 use Framework\Http\Controller;
 use Framework\Http\MiddlewareResolver;
-use Framework\Http\RequestContext;
-use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\Router\Router;
+use Framework;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Finder\Finder;
@@ -45,28 +44,10 @@ class Core implements HttpKernelInterface
         $app->pipe(new Middlewares\ErrorHandlerMiddleware($params['debug']));
         $app->pipe(Middlewares\CredentialsMiddleware::class);
         $app->pipe(Middlewares\ProfilerMiddleware::class);
+        $app->pipe(new Framework\Http\Middleware\RouteMiddleware($router));
+        $app->pipe(new Framework\Http\Middleware\DispatchMiddleware($middlewareResolver));
+        $app->pipe(new Framework\Http\Middleware\DispatchRouteMiddleware($actionResolver));
 
-        try {
-            $context = RequestContext::instance($request);
-            $router->setContext($context);
-
-            $result = $router->match($request->getUri()->getPath());
-
-            foreach ($result->getAttributes() as $attribute => $value) {
-                $request = $request->withAttribute($attribute, $value);
-            }
-
-            $handler = $result->getHandler();
-            $app->pipe($handler->getMiddlewares());
-
-            $controller = $actionResolver->resolve($handler);
-            $method = $handler->getMethod();
-
-            $app->pipe(function (ServerRequestInterface $request) use ($controller, $method) {
-                return $this->runAction($controller, $method, $request);
-            });
-
-        } catch (RequestNotMatchedException $e) {}
         $response = $app->run($request);
 
         return $response->withHeader('X-Developer', 'Abdurakhmon Kodirov');
