@@ -4,6 +4,7 @@ namespace Framework\Http;
 
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Framework\Http\Router\Router;
+use Framework\Http\Router\RouterHandler;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\TestCase;
@@ -15,11 +16,11 @@ class RouterTest extends TestCase
     {
         $router = new Router();
 
-        $handlerGet = ['controller' => 'DefaultController', 'method' => 'handler_get'];
-        $handlerPost = ['controller' => 'DefaultController', 'method' => 'handler_post'];
+        $handlerGet = new RouterHandler([], 'DefaultController', 'handler_get');
+        $handlerPost = new RouterHandler([], 'DefaultController', 'handler_post');
 
-        $router->get($nameGet = 'blog', '/blog', [$handlerGet['controller'], $handlerGet['method']]);
-        $router->post($namePost = 'blog_edit', '/blog', [$handlerPost['controller'], $handlerPost['method']]);
+        $router->get($nameGet = 'blog', '/blog', [$handlerGet->getController(), $handlerGet->getMethod()]);
+        $router->post($namePost = 'blog_edit', '/blog', [$handlerPost->getController(), $handlerPost->getMethod()]);
 
         $context = $this->buildRequestContext('GET', '/blog');
         $router->setContext($context);
@@ -39,11 +40,11 @@ class RouterTest extends TestCase
     {
         $router = new Router();
 
-        $handlerGet = ['controller' => 'DefaultController', 'method' => 'handler_get'];
-        $handlerPost = ['controller' => 'DefaultController', 'method' => 'handler_post'];
+        $handlerGet = new RouterHandler([], 'DefaultController', 'handler_get');
+        $handlerPost = new RouterHandler([], 'DefaultController', 'handler_post');
 
-        $router->get($nameGet = 'blog', '/blog', $handlerGet);
-        $router->post($namePost = 'blog_edit', '/blog', $handlerPost);
+        $router->get($nameGet = 'blog', '/blog', ['controller' => $handlerGet->getController(), 'method' => $handlerGet->getMethod()]);
+        $router->post($namePost = 'blog_edit', '/blog', ['controller' => $handlerPost->getController(), 'method' => $handlerPost->getMethod()]);
 
         $context = $this->buildRequestContext('GET', '/blog');
         $router->setContext($context);

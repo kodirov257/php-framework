@@ -10,6 +10,7 @@ use Framework\Http\Application;
 use Framework\Http\Controller;
 use Framework\Http\MiddlewareResolver;
 use Framework\Http\Router\Router;
+use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Finder\Finder;
@@ -37,7 +38,7 @@ class Core implements HttpKernelInterface
         }
 
         $actionResolver = new ActionResolver();
-        $middlewareResolver = new MiddlewareResolver();
+        $middlewareResolver = new MiddlewareResolver(new Response());
         $notFoundHandler = config('app.not_found_handler') ?? Framework\Http\Middleware\NotFoundHandler::class;
         $app = new Application($middlewareResolver, new $notFoundHandler($request));
 
@@ -48,7 +49,7 @@ class Core implements HttpKernelInterface
         $app->pipe(new Framework\Http\Middleware\DispatchMiddleware($middlewareResolver));
         $app->pipe(new Framework\Http\Middleware\DispatchRouteMiddleware($actionResolver));
 
-        $response = $app->run($request);
+        $response = $app->handle($request);
 
         return $response->withHeader('X-Developer', 'Abdurakhmon Kodirov');
     }
@@ -76,26 +77,5 @@ class Core implements HttpKernelInterface
 
         $configLoader = new ConfigurationLoader();
         $configLoader->bootstrap(new ApplicationInfo($basePath));
-    }
-
-    /**
-     * Run action in controller.
-     *
-     * @param callable|\Closure|Controller|object $controller
-     * @param string $method
-     * @param ServerRequestInterface $request
-     * @return mixed
-     */
-    private function runAction(mixed $controller, string $method, ServerRequestInterface $request): mixed
-    {
-        if ($controller instanceof \Closure) {
-            return $controller($request);
-        }
-
-        if (method_exists($controller, 'callAction')) {
-            return $controller->callAction($method, $request);
-        }
-
-        return $controller->{$method}($request);
     }
 }

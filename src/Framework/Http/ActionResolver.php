@@ -10,7 +10,7 @@ class ActionResolver
      * @param RouterHandler $handler
      * @return callable|\Closure|Controller|object
      */
-    public function resolve(RouterHandler $handler)
+    public function resolve(RouterHandler $handler): mixed
     {
         if ($handler->getAction()) {
             return $handler->getAction();

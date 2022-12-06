@@ -3,11 +3,13 @@
 namespace App\Http\Middlewares;
 
 use Laminas\Diactoros\Response\HtmlResponse;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class NotFoundHandler
+class NotFoundHandler implements RequestHandlerInterface
 {
-    public function __invoke(ServerRequestInterface $request)
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         return new HtmlResponse('Undefined page.', 404);
     }

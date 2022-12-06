@@ -3,9 +3,12 @@
 namespace App\Http\Middlewares;
 
 use Laminas\Diactoros\Response\EmptyResponse;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class BasicAuthMiddleware
+class BasicAuthMiddleware implements MiddlewareInterface
 {
     public const ATTRIBUTE = '_user';
 
@@ -16,7 +19,7 @@ class BasicAuthMiddleware
         $this->users = $users;
     }
 
-    public function __invoke(ServerRequestInterface $request, callable $next)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $username = $request->getServerParams()['PHP_AUTH_USER'] ?? null;
         $password = $request->getServerParams()['PHP_AUTH_PW'] ?? null;
@@ -24,7 +27,7 @@ class BasicAuthMiddleware
         if (!empty($username) && !empty($password)) {
             foreach ($this->users as $name => $pass) {
                 if ($name === $username && $pass === $password) {
-                    return ($next)($request->withAttribute(self::ATTRIBUTE, $username));
+                    return $handler->handle($request->withAttribute(self::ATTRIBUTE, $username));
                 }
             }
         }

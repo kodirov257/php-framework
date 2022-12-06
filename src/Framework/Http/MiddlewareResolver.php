@@ -2,32 +2,78 @@
 
 namespace Framework\Http;
 
-use Framework\Http\Pipeline\Pipeline;
+use Framework\Http\Pipeline\SinglePassMiddlewareDecorator;
+use Framework\Http\Pipeline\UnknownMiddlewareTypeException;
+use Laminas\Stratigility\Middleware\CallableMiddlewareDecorator;
+use Laminas\Stratigility\Middleware\DoublePassMiddlewareDecorator;
+use Laminas\Stratigility\Middleware\RequestHandlerMiddleware;
+use Laminas\Stratigility\MiddlewarePipe;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 class MiddlewareResolver
 {
-    public function resolve(mixed $handler): callable
+    private ResponseInterface $responsePrototype;
+
+    public function __construct(ResponseInterface $responsePrototype)
+    {
+        $this->responsePrototype = $responsePrototype;
+    }
+
+    public function resolve(mixed $handler): MiddlewareInterface
     {
         if (\is_array($handler)) {
             return $this->createPipe($handler);
         }
 
         if (\is_string($handler)) {
-            return function (ServerRequestInterface $request, callable $next) use ($handler) {
-                $object = new $handler();
-                return $object($request, $next);
-            };
+            return new CallableMiddlewareDecorator(function (ServerRequestInterface $request, RequestHandlerInterface $next) use ($handler) {
+                $middleware = $this->resolve(new $handler());
+                return $middleware->process($request, $next);
+            });
         }
-        return $handler;
+
+        if ($handler instanceof MiddlewareInterface) {
+            return $handler;
+        }
+
+        if ($handler instanceof RequestHandlerInterface) {
+            return new RequestHandlerMiddleware($handler);
+        }
+
+        if ($handler instanceof \Closure) {
+            $reflection = new \ReflectionFunction($handler);
+            return $this->resolveObject($handler, $reflection);
+        }
+
+        if (\is_object($handler)) {
+            $reflection = new \ReflectionClass($handler);
+            if ($reflection->hasMethod('__invoke')) {
+                $method = $reflection->getMethod('__invoke');
+                return $this->resolveObject($handler, $method);
+            }
+        }
+
+        throw new UnknownMiddlewareTypeException($handler);
     }
 
-    private function createPipe(array $handlers): Pipeline
+    private function createPipe(array $handlers): MiddlewarePipe
     {
-        $pipeline = new Pipeline();
+        $pipeline = new MiddlewarePipe();
         foreach ($handlers as $handler) {
             $pipeline->pipe($this->resolve($handler));
         }
         return $pipeline;
+    }
+
+    private function resolveObject(mixed $handler, \ReflectionFunctionAbstract $functionOrMethod): SinglePassMiddlewareDecorator|DoublePassMiddlewareDecorator
+    {
+        $parameters = $functionOrMethod->getParameters();
+        if (\count($parameters) === 2 && $parameters[1]->getType()->getName() === 'callable') {
+            return new SinglePassMiddlewareDecorator($handler);
+        }
+        return new DoublePassMiddlewareDecorator($handler, $this->responsePrototype);
     }
 }
