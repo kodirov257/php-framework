@@ -5,9 +5,14 @@ namespace Framework\Container;
 class Container
 {
     private array $definitions = [];
+    private array $results = [];
 
     public function get($id): mixed
     {
+        if (array_key_exists($id, $this->results)) {
+            return $this->results[$id];
+        }
+
         if (!array_key_exists($id, $this->definitions)) {
             throw new ServiceNotFoundException('Unknown service "' . $id . '"');
         }
@@ -15,16 +20,20 @@ class Container
         $definition = $this->definitions[$id];
 
         if ($definition instanceof \Closure) {
-            $result = $definition();
+            $this->results[$id] = $definition();
         } else {
-            $result = $definition;
+            $this->results[$id] = $definition;
         }
 
-        return $result;
+        return $this->results[$id];
     }
 
     public function set($id, $value): void
     {
+        if (array_key_exists($id, $this->results)) {
+            unset($this->results[$id]);
+        }
+
         $this->definitions[$id] = $value;
     }
 }
