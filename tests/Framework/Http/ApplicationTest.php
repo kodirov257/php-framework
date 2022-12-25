@@ -2,6 +2,7 @@
 
 namespace Tests\Framework\Http;
 
+use Framework\Container\Container;
 use Framework\Http\Application;
 use Framework\Http\MiddlewareResolver;
 use Laminas\Diactoros\Response;
@@ -17,7 +18,7 @@ class ApplicationTest extends TestCase
 {
     public function testPipe(): void
     {
-        $app = new Application(new MiddlewareResolver(new Response()), new DefaultHandler());
+        $app = new Application(new MiddlewareResolver(new Response(), new Container()), new DefaultHandler());
 
         $app->pipe(new Middleware1());
         $app->pipe(new Middleware2());

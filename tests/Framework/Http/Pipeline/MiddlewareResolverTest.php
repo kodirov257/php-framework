@@ -2,6 +2,7 @@
 
 namespace Tests\Framework\Http\Pipeline;
 
+use Framework\Container\Container;
 use Framework\Http\MiddlewareResolver;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\EmptyResponse;
@@ -21,7 +22,7 @@ class MiddlewareResolverTest extends TestCase
      */
     public function testDirect($handler): void
     {
-        $resolver = new MiddlewareResolver(new Response());
+        $resolver = new MiddlewareResolver(new Response(), new Container());
         $middleware = $resolver->resolve($handler);
 
         $response = $middleware->process(
@@ -38,7 +39,7 @@ class MiddlewareResolverTest extends TestCase
      */
     public function testNext($handler): void
     {
-        $resolver = new MiddlewareResolver(new Response());
+        $resolver = new MiddlewareResolver(new Response(), new Container());
         $middleware = $resolver->resolve($handler);
 
         $response = $middleware->process(
@@ -77,7 +78,7 @@ class MiddlewareResolverTest extends TestCase
 
     public function testHandler(): void
     {
-        $resolver = new MiddlewareResolver(new Response());
+        $resolver = new MiddlewareResolver(new Response(), new Container());
         $middleware = $resolver->resolve(PsrHandler::class);
 
         $response = $middleware->process(
@@ -90,7 +91,7 @@ class MiddlewareResolverTest extends TestCase
 
     public function testArray(): void
     {
-        $resolver = new MiddlewareResolver(new Response());
+        $resolver = new MiddlewareResolver(new Response(), new Container());
         $middleware = $resolver->resolve([
             new DummyMiddleware(),
             new SinglePassMiddleware(),

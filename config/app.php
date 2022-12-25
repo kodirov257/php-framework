@@ -36,9 +36,22 @@ return [
     |
      */
     'middlewares' => [
-        new App\Http\Middlewares\ErrorHandlerMiddleware(true),
         App\Http\Middlewares\CredentialsMiddleware::class,
         App\Http\Middlewares\ProfilerMiddleware::class
+    ],
+
+    /*
+    | --------------------------------------------------------------
+    | Autoloaded containers
+    | --------------------------------------------------------------
+    | The containers listed here will be automatically loaded on the
+    | request to application. Feel free to add your own services to
+    | this array to grant expanded functionality to your applications.
+    |
+     */
+    'containers' => [
+        \App\Http\Middlewares\BasicAuthMiddleware::class,
+        \App\Http\Middlewares\ErrorHandlerMiddleware::class,
     ],
 
     'not_found_handler' => App\Http\Middlewares\NotFoundHandler::class,

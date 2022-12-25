@@ -27,11 +27,11 @@ class Core implements HttpKernelInterface
         $router = new Router();
 
         $container = new Container();
-
         $container->set('config', [
             'debug' => true,
             'users' => ['admin' => 'password'],
         ]);
+        require 'config/container.php';
 
         if (config('app.route') === Router::ATTRIBUTE_TYPE) {
             $router->registerRoutesFromAttributes($this->getControllers());
@@ -40,13 +40,11 @@ class Core implements HttpKernelInterface
         }
 
         $actionResolver = new ActionResolver();
-        $middlewareResolver = new MiddlewareResolver(new Response());
+        $middlewareResolver = new MiddlewareResolver(new Response(), $container);
         $notFoundHandler = config('app.not_found_handler') ?? Framework\Http\Middleware\NotFoundHandler::class;
         $app = new Application($middlewareResolver, new $notFoundHandler($request));
 
-        foreach (config('app.middlewares') as $middleware) {
-            $app->pipe($middleware);
-        }
+        require 'config/pipeline.php';
         $app->pipe(new Framework\Http\Middleware\RouteMiddleware($router));
         $app->pipe(new Framework\Http\Middleware\DispatchMiddleware($middlewareResolver));
         $app->pipe(new Framework\Http\Middleware\DispatchRouteMiddleware($actionResolver));

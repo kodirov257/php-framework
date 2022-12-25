@@ -2,6 +2,7 @@
 
 namespace Framework\Http;
 
+use Framework\Container\Container;
 use Framework\Http\Pipeline\SinglePassMiddlewareDecorator;
 use Framework\Http\Pipeline\UnknownMiddlewareTypeException;
 use Laminas\Stratigility\Middleware\CallableMiddlewareDecorator;
@@ -16,10 +17,12 @@ use Psr\Http\Server\RequestHandlerInterface;
 class MiddlewareResolver
 {
     private ResponseInterface $responsePrototype;
+    private Container $container;
 
-    public function __construct(ResponseInterface $responsePrototype)
+    public function __construct(ResponseInterface $responsePrototype, Container $container)
     {
         $this->responsePrototype = $responsePrototype;
+        $this->container = $container;
     }
 
     public function resolve(mixed $handler): MiddlewareInterface
@@ -29,6 +32,10 @@ class MiddlewareResolver
         }
 
         if (\is_string($handler)) {
+            if ($this->container->has($handler)) {
+                return $this->resolve($this->container->get($handler));
+            }
+
             return new CallableMiddlewareDecorator(function (ServerRequestInterface $request, RequestHandlerInterface $next) use ($handler) {
                 $middleware = $this->resolve(new $handler());
                 return $middleware->process($request, $next);

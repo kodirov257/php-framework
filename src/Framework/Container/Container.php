@@ -36,4 +36,9 @@ class Container
 
         $this->definitions[$id] = $value;
     }
+
+    public function has($id): bool
+    {
+        return array_key_exists($id, $this->results) || array_key_exists($id, $this->definitions);
+    }
 }

@@ -65,12 +65,30 @@ class ContainerTest extends TestCase
         self::assertSame($value1, $value2);
     }
 
-    public function testNotFound()
+    public function testFound()
+    {
+        $container = new Container();
+
+        $container->set($name = 'name', 5);
+        $result = $container->has($name);
+        self::assertTrue($result);
+    }
+
+    public function testNotFound1()
     {
         $container = new Container();
 
         $this->expectException(ServiceNotFoundException::class);
 
         $container->get('email');
+    }
+
+    public function testNotFound2()
+    {
+        $container = new Container();
+
+        $result = $container->has('email');
+
+        self::assertFalse($result);
     }
 }
