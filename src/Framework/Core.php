@@ -4,10 +4,10 @@ namespace Framework;
 
 use Framework;
 use Framework\Bootstrap\Config\ConfigurationLoader;
+use Framework\Container\Container;
 use Framework\Contracts\Kernel\HttpKernelInterface;
 use Framework\Http\ActionResolver;
 use Framework\Http\Application;
-use Framework\Http\Controller;
 use Framework\Http\MiddlewareResolver;
 use Framework\Http\Router\Router;
 use Laminas\Diactoros\Response;
@@ -26,10 +26,12 @@ class Core implements HttpKernelInterface
 
         $router = new Router();
 
-        $params = [
+        $container = new Container();
+
+        $container->set('config', [
             'debug' => true,
             'users' => ['admin' => 'password'],
-        ];
+        ]);
 
         if (config('app.route') === Router::ATTRIBUTE_TYPE) {
             $router->registerRoutesFromAttributes($this->getControllers());
