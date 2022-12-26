@@ -2,18 +2,11 @@
 
 namespace Framework;
 
-use Framework;
 use Framework\Bootstrap\Config\ConfigurationLoader;
-use Framework\Container\Container;
+use Framework\Contracts\Container\ContainerInterface;
 use Framework\Contracts\Kernel\HttpKernelInterface;
-use Framework\Http\ActionResolver;
 use Framework\Http\Application;
-use Framework\Http\Middleware\DispatchMiddleware;
-use Framework\Http\Middleware\DispatchRouteMiddleware;
-use Framework\Http\Middleware\RouteMiddleware;
-use Framework\Http\MiddlewareResolver;
 use Framework\Http\Router\Router;
-use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Finder\Finder;
@@ -29,7 +22,7 @@ class Core implements HttpKernelInterface
 
         /**
          * @var $app Application
-         * @var $container Container
+         * @var $container ContainerInterface
          * @var $router Router
          */
         $container = require 'config/container.php';

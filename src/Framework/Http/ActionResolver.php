@@ -2,14 +2,14 @@
 
 namespace Framework\Http;
 
-use Framework\Container\Container;
+use Framework\Contracts\Container\ContainerInterface;
 use Framework\Http\Router\RouterHandler;
 
 class ActionResolver
 {
-    private Container $container;
+    private ContainerInterface $container;
 
-    public function __construct(Container $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
