@@ -3,7 +3,7 @@
 namespace Tests\Framework\Http;
 
 use Framework\Container\ServiceNotFoundException;
-use Framework\Contracts\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 class DummyContainer implements ContainerInterface
 {

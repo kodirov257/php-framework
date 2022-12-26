@@ -3,10 +3,10 @@
 namespace Framework;
 
 use Framework\Bootstrap\Config\ConfigurationLoader;
-use Framework\Contracts\Container\ContainerInterface;
 use Framework\Contracts\Kernel\HttpKernelInterface;
 use Framework\Http\Application;
 use Framework\Http\Router\Router;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Finder\Finder;
