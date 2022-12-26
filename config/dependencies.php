@@ -1,9 +1,5 @@
 <?php
 
-use App\Http\Controllers\AboutController;
-use App\Http\Controllers\BlogController;
-use App\Http\Controllers\CabinetController;
-use App\Http\Controllers\HelloController;
 use App\Http\Middlewares;
 use Framework\Container\Container;
 use Framework\Http\ActionResolver;
@@ -59,20 +55,4 @@ $container->set(Middlewares\CredentialsMiddleware::class, function () {
 
 $container->set(Middlewares\ProfilerMiddleware::class, function () {
     return new Middlewares\ProfilerMiddleware();
-});
-
-$container->set(HelloController::class, function () {
-    return new HelloController();
-});
-
-$container->set(AboutController::class, function () {
-    return new AboutController();
-});
-
-$container->set(BlogController::class, function () {
-    return new BlogController();
-});
-
-$container->set(CabinetController::class, function () {
-    return new CabinetController();
 });
