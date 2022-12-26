@@ -4,8 +4,13 @@ namespace Framework\Container;
 
 class Container
 {
-    private array $definitions = [];
+    private array $definitions;
     private array $results = [];
+
+    public function __construct(array $definitions = [])
+    {
+        $this->definitions = $definitions;
+    }
 
     public function get($id): mixed
     {
