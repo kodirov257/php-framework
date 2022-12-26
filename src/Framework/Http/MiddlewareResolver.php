@@ -31,13 +31,9 @@ class MiddlewareResolver
             return $this->createPipe($handler);
         }
 
-        if (\is_string($handler)) {
-            if ($this->container->has($handler)) {
-                return $this->resolve($this->container->get($handler));
-            }
-
+        if (\is_string($handler) && $this->container->has($handler)) {
             return new CallableMiddlewareDecorator(function (ServerRequestInterface $request, RequestHandlerInterface $next) use ($handler) {
-                $middleware = $this->resolve(new $handler());
+                $middleware = $this->resolve($this->container->get($handler));
                 return $middleware->process($request, $next);
             });
         }
