@@ -39,6 +39,6 @@ class Container
 
     public function has($id): bool
     {
-        return array_key_exists($id, $this->results) || array_key_exists($id, $this->definitions);
+        return array_key_exists($id, $this->definitions);
     }
 }
