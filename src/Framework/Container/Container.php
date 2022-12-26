@@ -15,7 +15,26 @@ class Container
 
         if (!array_key_exists($id, $this->definitions)) {
             if (class_exists($id)) {
-                return $this->results[$id] = new $id();
+                $reflection = new \ReflectionClass($id);
+                $arguments = [];
+                if (($constructor = $reflection->getConstructor()) !== null) {
+                    foreach ($constructor->getParameters() as $parameter) {
+                        if ($paramType = $parameter->getType()) {
+                            if ($paramType->getName() === 'array') {
+                                $arguments[] = [];
+                            } else {
+                                $arguments[] = $this->get($paramType->getName());
+                            }
+                        } else {
+                            if (!$parameter->isDefaultValueAvailable()) {
+                                throw new ServiceNotFoundException('Unable to resolve "' . $parameter->getName() . '"" in service "' . $id . '"');
+                            }
+                            $arguments[] = $parameter->getDefaultValue();
+                        }
+                    }
+                }
+                $this->results[$id] = $reflection->newInstanceArgs($arguments);
+                return $this->results[$id];
             }
             throw new ServiceNotFoundException('Unknown service "' . $id . '"');
         }
