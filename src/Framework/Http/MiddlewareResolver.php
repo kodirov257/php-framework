@@ -2,13 +2,13 @@
 
 namespace Framework\Http;
 
-use Framework\Contracts\Container\ContainerInterface;
 use Framework\Http\Pipeline\SinglePassMiddlewareDecorator;
 use Framework\Http\Pipeline\UnknownMiddlewareTypeException;
 use Laminas\Stratigility\Middleware\CallableMiddlewareDecorator;
 use Laminas\Stratigility\Middleware\DoublePassMiddlewareDecorator;
 use Laminas\Stratigility\Middleware\RequestHandlerMiddleware;
 use Laminas\Stratigility\MiddlewarePipe;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

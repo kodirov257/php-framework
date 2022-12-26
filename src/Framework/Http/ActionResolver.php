@@ -2,8 +2,8 @@
 
 namespace Framework\Http;
 
-use Framework\Contracts\Container\ContainerInterface;
 use Framework\Http\Router\RouterHandler;
+use Psr\Container\ContainerInterface;
 
 class ActionResolver
 {

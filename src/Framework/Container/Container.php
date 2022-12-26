@@ -2,7 +2,7 @@
 
 namespace Framework\Container;
 
-use Framework\Contracts\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 class Container implements ContainerInterface
 {
