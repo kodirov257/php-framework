@@ -45,6 +45,7 @@ class ConfigurationLoader
                      ->notName('routes.php')
                      ->notName('container.php')
                      ->notName('pipeline.php')
+                     ->notName('dependencies.php')
                      ->in($configPath) as $file) {
             $directory = $this->getNestedDirectory($file, $configPath);
 

@@ -3,11 +3,10 @@
 use App\Http\Middlewares;
 use Framework\Container\Container;
 
-/* @var $container Framework\Container\Container */
-$container->set(Middlewares\BasicAuthMiddleware::class, function (Container $container) {
-    return new Middlewares\BasicAuthMiddleware($container->get('config')['users']);
-});
+$container = new Container();
 
-$container->set(Middlewares\ErrorHandlerMiddleware::class, function (Container $container) {
-    return new Middlewares\ErrorHandlerMiddleware($container->get('config')['debug']);
-});
+$container->set('config', require __DIR__ . '/parameters.php');
+
+require __DIR__ . '/dependencies.php';
+
+return $container;

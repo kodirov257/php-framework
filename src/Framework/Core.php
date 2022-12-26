@@ -27,60 +27,22 @@ class Core implements HttpKernelInterface
     {
         $this->setConfiguration();
 
-        $container = new Container();
-        $container->set('config', [
-            'debug' => true,
-            'users' => ['admin' => 'password'],
-        ]);
-        require 'config/container.php';
-
-        $container->set(Router::class, function (Container $container) {
-            $router = new Router();
-
-            if (config('app.route') === Router::ATTRIBUTE_TYPE) {
-                $router->registerRoutesFromAttributes($this->getControllers());
-            } else {
-                require 'config/routes.php';
-            }
-
-            return $router;
-        });
-
-        $container->set(Application::class, function (Container $container) use ($request) {
-            $notFoundHandler = config('app.not_found_handler') ?? Framework\Http\Middleware\NotFoundHandler::class;
-            return new Application($container->get(MiddlewareResolver::class), new $notFoundHandler($request));
-        });
-
-        $container->set(RouteMiddleware::class, function (Container $container) {
-            return new RouteMiddleware($container->get(Router::class));
-        });
-
-        $container->set(DispatchMiddleware::class, function (Container $container) {
-            return new DispatchMiddleware($container->get(MiddlewareResolver::class));
-        });
-
-        $container->set(DispatchRouteMiddleware::class, function (Container $container) {
-            return new DispatchRouteMiddleware($container->get(ActionResolver::class));
-        });
-
-        $container->set(MiddlewareResolver::class, function (Container $container) {
-            return new MiddlewareResolver(new Response(), $container);
-        });
-
-        $container->set(ActionResolver::class, function (Container $container) {
-            return new ActionResolver();
-        });
-
-
-
-        ### Initialization
-        /** @var $app Application */
+        /**
+         * @var $app Application
+         * @var $container Container
+         * @var $router Router
+         */
+        $container = require 'config/container.php';
         $app = $container->get(Application::class);
+        $router = $container->get(Router::class);
 
         require 'config/pipeline.php';
-        $app->pipe($container->get(Framework\Http\Middleware\RouteMiddleware::class));
-        $app->pipe($container->get(Framework\Http\Middleware\DispatchMiddleware::class));
-        $app->pipe($container->get(Framework\Http\Middleware\DispatchRouteMiddleware::class));
+
+        if (config('app.route') === Router::ATTRIBUTE_TYPE) {
+            $router->registerRoutesFromAttributes($this->getControllers());
+        } else {
+            require 'config/routes.php';
+        }
 
         $response = $app->handle($request);
 
