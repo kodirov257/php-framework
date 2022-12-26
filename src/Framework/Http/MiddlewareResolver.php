@@ -2,7 +2,7 @@
 
 namespace Framework\Http;
 
-use Framework\Container\Container;
+use Framework\Contracts\Container\ContainerInterface;
 use Framework\Http\Pipeline\SinglePassMiddlewareDecorator;
 use Framework\Http\Pipeline\UnknownMiddlewareTypeException;
 use Laminas\Stratigility\Middleware\CallableMiddlewareDecorator;
@@ -17,9 +17,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 class MiddlewareResolver
 {
     private ResponseInterface $responsePrototype;
-    private Container $container;
+    private ContainerInterface $container;
 
-    public function __construct(ResponseInterface $responsePrototype, Container $container)
+    public function __construct(ResponseInterface $responsePrototype, ContainerInterface $container)
     {
         $this->responsePrototype = $responsePrototype;
         $this->container = $container;
