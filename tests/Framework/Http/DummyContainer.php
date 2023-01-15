@@ -2,7 +2,7 @@
 
 namespace Tests\Framework\Http;
 
-use Framework\Container\ServiceNotFoundException;
+use DI\NotFoundException;
 use Psr\Container\ContainerInterface;
 
 class DummyContainer implements ContainerInterface
@@ -10,7 +10,7 @@ class DummyContainer implements ContainerInterface
     public function get(string $id)
     {
         if (!class_exists($id)) {
-            throw new ServiceNotFoundException($id);
+            throw new NotFoundException($id);
         }
         return new $id();
     }

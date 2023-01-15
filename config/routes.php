@@ -6,7 +6,7 @@ use Framework\Http\Router\Router;
 use Laminas\Diactoros\Response\HtmlResponse;
 
 /** @var $params array */
-/** @var $container \Framework\Container\Container */
+/** @var $container DI\Container */
 /** @var $router Router */
 $router->get('home', '/', [Controllers\HelloController::class, 'index']);
 $router->get('about', '/about', [Controllers\AboutController::class, 'index']);
