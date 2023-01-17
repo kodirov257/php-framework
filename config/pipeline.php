@@ -1,6 +1,6 @@
 <?php
 
-/* @var $container Framework\Container\Container */
+/* @var $container DI\Container */
 /* @var $app Framework\Http\Application */
 $app->pipe(\App\Http\Middlewares\ErrorHandlerMiddleware::class);
 $app->pipe(\App\Http\Middlewares\CredentialsMiddleware::class);

@@ -2,7 +2,7 @@
 
 namespace Tests\Framework\Http;
 
-use Framework\Container\Container;
+use DI\Container;
 use Framework\Http\Application;
 use Framework\Http\MiddlewareResolver;
 use Laminas\Diactoros\Response;

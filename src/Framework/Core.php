@@ -2,6 +2,7 @@
 
 namespace Framework;
 
+use DI;
 use Framework\Bootstrap\Config\ConfigurationLoader;
 use Framework\Contracts\Kernel\HttpKernelInterface;
 use Framework\Http\Application;
@@ -22,10 +23,9 @@ class Core implements HttpKernelInterface
 
         /**
          * @var $app Application
-         * @var $container ContainerInterface
          * @var $router Router
          */
-        $container = require 'config/container.php';
+        $container = $this->setContainer();
         $app = $container->get(Application::class);
         $router = $container->get(Router::class);
 
@@ -65,5 +65,22 @@ class Core implements HttpKernelInterface
 
         $configLoader = new ConfigurationLoader();
         $configLoader->bootstrap(new ApplicationInfo($basePath));
+    }
+
+    private function setContainer(): ContainerInterface
+    {
+        $builder = new DI\ContainerBuilder();
+        $builder->useAttributes(true);
+        $builder->addDefinitions(array_merge_recursive(
+            require __DIR__ . '/di/dependencies.php',
+            require 'config/dependencies.php'
+        ));
+
+        /* @var $container DI\Container */
+        $container = $builder->build();
+
+        $container->set('config', require 'config/parameters.php');
+
+        return $container;
     }
 }
