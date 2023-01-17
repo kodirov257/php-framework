@@ -21,7 +21,6 @@ class Core implements HttpKernelInterface
     {
         $this->setConfiguration();
 
-
         /**
          * @var $app Application
          * @var $router Router
@@ -71,6 +70,7 @@ class Core implements HttpKernelInterface
     private function setContainer(): ContainerInterface
     {
         $builder = new DI\ContainerBuilder();
+        $builder->useAttributes(true);
         $builder->addDefinitions(array_merge_recursive(
             require __DIR__ . '/di/dependencies.php',
             require 'config/dependencies.php'
