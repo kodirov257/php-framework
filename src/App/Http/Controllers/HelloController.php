@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class HelloController extends Controller
 {
-    #[Get('home', '/')]
+    #[Get(name: 'home', uri: '/')]
     public function index(ServerRequestInterface $request)
     {
         $name = $request->getQueryParams()['name'] ?? 'Guest';

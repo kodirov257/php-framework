@@ -44,13 +44,24 @@ class Router implements Registrar
             $reflectionController = new \ReflectionClass($controller);
 
             foreach ($reflectionController->getMethods() as $method) {
-                $attributes = $method->getAttributes(Attributes\Route::class, \ReflectionAttribute::IS_INSTANCEOF);
+                $middlewareAttributes = $method->getAttributes(Attributes\Middleware::class, \ReflectionAttribute::IS_INSTANCEOF);
+                $middlewares = [];
+                foreach ($middlewareAttributes as $attribute) {
+                    /* @var $middleware Attributes\Middleware */
+                    $middleware = $attribute->newInstance();
+                    $middlewares[] = $middleware->value ? [$middleware->name => $middleware->value] : [$middleware->name];
+                }
 
-                foreach ($attributes as $attribute) {
+                $routeAttributes = $method->getAttributes(Attributes\Route::class, \ReflectionAttribute::IS_INSTANCEOF);
+                foreach ($routeAttributes as $attribute) {
                     /* @var $route Attributes\Route */
                     $route = $attribute->newInstance();
 
-                    $this->add($route->name, $route->uri, [$method->getDeclaringClass()->getName(), $method->getName()], $route->methods, $route->tokens);
+                    $this->add($route->name, $route->uri,
+                        empty($middleware)
+                            ? [$method->getDeclaringClass()->getName(), $method->getName()]
+                            : ['middleware' => $middlewares, 'action' => [$method->getDeclaringClass()->getName(), $method->getName()]],
+                        $route->methods, $route->tokens);
                 }
             }
         }

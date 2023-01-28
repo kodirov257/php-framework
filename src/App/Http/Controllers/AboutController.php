@@ -8,7 +8,7 @@ use Laminas\Diactoros\Response\HtmlResponse;
 
 class AboutController extends Controller
 {
-    #[Get('about', '/about')]
+    #[Get(name: 'about', uri: '/about')]
     public function index()
     {
         return new HtmlResponse('I am a simple site');

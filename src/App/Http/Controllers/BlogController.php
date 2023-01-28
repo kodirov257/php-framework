@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class BlogController extends Controller
 {
-    #[Get('blog', '/blog')]
+    #[Get(name: 'blog', uri: '/blog')]
     public function index()
     {
         return new JsonResponse([
@@ -19,7 +19,7 @@ class BlogController extends Controller
         ]);
     }
 
-    #[Get('blog_show', '/blog/{id}', ['id' => '\d+'])]
+    #[Get(name: 'blog_show', uri: '/blog/{id}', tokens: ['id' => '\d+'])]
     public function show(ServerRequestInterface $request)
     {
         $id = $request->getAttribute('id');
