@@ -4,10 +4,10 @@ namespace Framework;
 
 use DI;
 use Framework\Bootstrap\Config\ConfigurationLoader;
+use Framework\Contracts\Application as ApplicationInterface;
 use Framework\Contracts\Kernel\HttpKernelInterface;
 use Framework\Http\HttpApplication;
 use Framework\Http\Router\Router;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Finder\Finder;
@@ -19,13 +19,12 @@ class Core implements HttpKernelInterface
 
     public function handle(ServerRequestInterface $request, bool $catch = true): ResponseInterface
     {
-        $this->setConfiguration();
-
         /**
          * @var $app HttpApplication
          * @var $router Router
          */
         $container = $this->setContainer();
+        $this->setConfiguration();
         $app = $container->get(HttpApplication::class);
         $router = $container->get(Router::class);
 
@@ -64,24 +63,22 @@ class Core implements HttpKernelInterface
         $dotenv->load();
 
         $configLoader = new ConfigurationLoader();
-        $configLoader->bootstrap(new Application($basePath));
+        $configLoader->bootstrap(Application::getInstance()->setBasePath($basePath));
     }
 
-    private function setContainer(): ContainerInterface
+    private function setContainer(): ApplicationInterface
     {
-        $builder = new DI\ContainerBuilder();
+        $builder = new DI\ContainerBuilder(Application::class);
         $builder->useAttributes(true);
         $builder->addDefinitions(array_merge_recursive(
             require __DIR__ . '/di/dependencies.php',
             require 'config/dependencies.php'
         ));
 
-        /* @var $container DI\Container */
+        /* @var $container Application */
         $container = $builder->build();
 
         $container->set('config', require 'config/parameters.php');
-
-
 
         return $container;
     }

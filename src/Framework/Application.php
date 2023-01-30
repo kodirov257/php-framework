@@ -2,9 +2,13 @@
 
 namespace Framework;
 
+use DI\Container;
+use DI\Definition\Source\MutableDefinitionSource;
+use DI\Proxy\ProxyFactory;
 use Framework\Contracts\Application as ApplicationContract;
+use Psr\Container\ContainerInterface;
 
-class Application implements ApplicationContract
+class Application extends Container implements ApplicationContract
 {
     /**
      * The current globally available application (if any).
@@ -34,8 +38,14 @@ class Application implements ApplicationContract
      */
     protected string $basePath;
 
-    public function __construct(string $basePath = null)
-    {
+    public function __construct(
+        array|MutableDefinitionSource $definitions = [],
+        ProxyFactory $proxyFactory = null,
+        ContainerInterface $wrapperContainer = null,
+        string $basePath = null
+    ) {
+        parent::__construct($definitions, $proxyFactory, $wrapperContainer);
+
         if ($basePath) {
             $this->setBasePath($basePath);
         }
@@ -94,13 +104,13 @@ class Application implements ApplicationContract
 
     public function registerInstance(string $abstract, mixed $instance): mixed
     {
-        $this->instances[$abstract] = $instance;
+        $this->set($abstract, $instance);
 
         return $instance;
     }
 
     public function resolveInstance(string $abstract): mixed
     {
-        return $this->instances[$abstract];
+        return $this->get($abstract);
     }
 }

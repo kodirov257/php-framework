@@ -6,7 +6,6 @@ use Framework\Support\Environment;
 if (!function_exists('app')) {
     /**
      * @param string|null $abstract
-     * @param array $parameters
      * @return mixed|Application
      */
     function app(string|null $abstract = null)
@@ -25,19 +24,21 @@ if (!function_exists('config')) {
      *
      * @param array|string|null $key
      * @param mixed $default
-     * @return mixed|\Framework\Config\Repository
+     * @return mixed|Framework\Config\Repository
      */
     function config(array|string|null $key = null, mixed $default = null)
     {
+        /* @var $config Framework\Config\Repository */
+        $config = app('configuration');
         if (is_null($key)) {
-            return app('config');
+            return $config;
         }
 
         if (is_array($key)) {
-            return app('config')->set($key);
+            return $config->set($key);
         }
 
-        return app('config')->get($key, $default);
+        return $config->get($key, $default);
     }
 }
 
