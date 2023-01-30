@@ -1,21 +1,21 @@
 <?php
 
-use Framework\ApplicationInfo;
+use Framework\Application;
 use Framework\Support\Environment;
 
 if (!function_exists('app')) {
     /**
      * @param string|null $abstract
      * @param array $parameters
-     * @return mixed|ApplicationInfo
+     * @return mixed|Application
      */
     function app(string|null $abstract = null)
     {
         if (is_null($abstract)) {
-            return ApplicationInfo::getInstance();
+            return Application::getInstance();
         }
 
-        return ApplicationInfo::getInstance()->resolveInstance($abstract);
+        return Application::getInstance()->resolveInstance($abstract);
     }
 }
 

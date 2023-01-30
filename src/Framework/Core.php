@@ -5,7 +5,7 @@ namespace Framework;
 use DI;
 use Framework\Bootstrap\Config\ConfigurationLoader;
 use Framework\Contracts\Kernel\HttpKernelInterface;
-use Framework\Http\Application;
+use Framework\Http\HttpApplication;
 use Framework\Http\Router\Router;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -22,11 +22,11 @@ class Core implements HttpKernelInterface
         $this->setConfiguration();
 
         /**
-         * @var $app Application
+         * @var $app HttpApplication
          * @var $router Router
          */
         $container = $this->setContainer();
-        $app = $container->get(Application::class);
+        $app = $container->get(HttpApplication::class);
         $router = $container->get(Router::class);
 
         require 'config/pipeline.php';
@@ -64,7 +64,7 @@ class Core implements HttpKernelInterface
         $dotenv->load();
 
         $configLoader = new ConfigurationLoader();
-        $configLoader->bootstrap(new ApplicationInfo($basePath));
+        $configLoader->bootstrap(new Application($basePath));
     }
 
     private function setContainer(): ContainerInterface
@@ -80,6 +80,8 @@ class Core implements HttpKernelInterface
         $container = $builder->build();
 
         $container->set('config', require 'config/parameters.php');
+
+
 
         return $container;
     }
