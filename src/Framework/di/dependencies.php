@@ -5,6 +5,7 @@ use Framework\Contracts\Application as ApplicationInterface;
 use Framework\Http\ActionResolver;
 use Framework\Http\HttpApplication;
 use Framework\Http\MiddlewareResolver;
+use Framework\Template\TemplateRenderer;
 use Laminas\Diactoros\Response;
 
 return [
@@ -19,5 +20,9 @@ return [
 
     ActionResolver::class => DependencyInjection\factory(function (ApplicationInterface $container) {
         return new ActionResolver($container);
+    }),
+
+    TemplateRenderer::class => DependencyInjection\factory(function () {
+        return new TemplateRenderer('templates');
     }),
 ];
