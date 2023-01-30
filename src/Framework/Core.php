@@ -22,6 +22,7 @@ class Core implements HttpKernelInterface
         /**
          * @var $app HttpApplication
          * @var $router Router
+         * @var $container Application
          */
         $container = $this->setContainer();
         $this->setConfiguration();
