@@ -39,6 +39,15 @@ class PhpRenderer implements TemplateRenderer
         $this->extend = $view;
     }
 
+    public function ensureBlock(string $name): bool
+    {
+        if ($this->hasBlock($name)) {
+            return false;
+        }
+        $this->beginBlock($name);
+        return true;
+    }
+
     public function beginBlock(string $name): void
     {
         $this->blockNames->push($name);
@@ -49,7 +58,7 @@ class PhpRenderer implements TemplateRenderer
     {
         $content = ob_get_clean();
         $name = $this->blockNames->pop();
-        if (array_key_exists($name, $this->blocks)) {
+        if ($this->hasBlock($name)) {
             return;
         }
         $this->blocks[$name] = $content;
@@ -58,5 +67,10 @@ class PhpRenderer implements TemplateRenderer
     public function renderBlock(string $name): string
     {
         return $this->blocks[$name] ?? '';
+    }
+
+    private function hasBlock(string $name): bool
+    {
+        return array_key_exists($name, $this->blocks);
     }
 }
