@@ -7,7 +7,7 @@ use Framework\Contracts\Template\TemplateRenderer;
 class PhpRenderer implements TemplateRenderer
 {
     private string $path;
-    private $extend;
+    private ?string $extend;
     private array $params = [];
 
     public function __construct(string $path)
@@ -32,5 +32,10 @@ class PhpRenderer implements TemplateRenderer
         return $this->render($this->extend, [
             'content' => $content,
         ]);
+    }
+
+    public function extend(string $view): void
+    {
+        $this->extend = $view;
     }
 }
