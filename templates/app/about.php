@@ -21,4 +21,6 @@
     </nav>
 <?php $this->endBlock(); ?>
 
-<h1>About the site</h1>
+<?php $this->beginBlock('content'); ?>
+    <h1>About the site</h1>
+<?php $this->endBlock(); ?>
