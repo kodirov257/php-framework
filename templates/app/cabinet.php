@@ -9,6 +9,15 @@
 
 <?php $this->params['title'] = 'Cabinet'; ?>
 
+<?php $this->beginBlock('breadcrumbs'); ?>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active">Cabinet</li>
+    </ol>
+</nav>
+<?php $this->endBlock(); ?>
+
 <?php $this->beginBlock('sidebar'); ?>
     <div class="panel panel-default" style="width: 25rem">
         <div class="panel-heading">Cabinet</div>
@@ -17,12 +26,5 @@
         </div>
     </div>
 <?php $this->endBlock(); ?>
-
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item active">Cabinet</li>
-    </ol>
-</nav>
 
 <h1>Cabinet of <?= htmlspecialchars($name, ENT_QUOTES | ENT_SUBSTITUTE) ?></h1>

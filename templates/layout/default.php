@@ -40,6 +40,7 @@
 
 <div class="app-content pt-4">
     <main class="container">
+        <?= $this->renderBlock('breadcrumbs') ?>
         <?= $content ?>
     </main>
 </div>
