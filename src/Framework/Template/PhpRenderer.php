@@ -2,7 +2,9 @@
 
 namespace Framework\Template;
 
-class TemplateRenderer
+use Framework\Contracts\Template\TemplateRenderer;
+
+class PhpRenderer implements TemplateRenderer
 {
     private string $path;
 
@@ -11,9 +13,9 @@ class TemplateRenderer
         $this->path = $path;
     }
 
-    public function render(string $view, array $params = []): string
+    public function render(string $name, array $params = []): string
     {
-        $templateFile = $this->path . '/' . $view . '.php';
+        $templateFile = $this->path . '/' . $name . '.php';
 
         ob_start();
         extract($params, EXTR_OVERWRITE);

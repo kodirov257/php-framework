@@ -3,18 +3,18 @@
 namespace Tests\App\Http\Controllers;
 
 use App\Http\Controllers\HelloController;
-use Framework\Template\TemplateRenderer;
+use Framework\Template\PhpRenderer;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 
 class HelloControllerTest extends TestCase
 {
-    private TemplateRenderer $renderer;
+    private PhpRenderer $renderer;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->renderer = new TemplateRenderer('templates');
+        $this->renderer = new PhpRenderer('templates');
     }
 
     public function test()

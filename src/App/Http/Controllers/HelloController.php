@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use Framework\Http\Controller;
 use Framework\Http\Router\Attributes\Get;
-use Framework\Template\TemplateRenderer;
+use Framework\Template\PhpRenderer;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Psr\Http\Message\ServerRequestInterface;
 
 class HelloController extends Controller
 {
-    private TemplateRenderer $template;
+    private PhpRenderer $template;
 
-    public function __construct(TemplateRenderer $template)
+    public function __construct(PhpRenderer $template)
     {
         $this->template = $template;
     }

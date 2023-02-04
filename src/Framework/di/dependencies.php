@@ -2,10 +2,11 @@
 
 use DI as DependencyInjection;
 use Framework\Contracts\Application as ApplicationInterface;
+use Framework\Contracts\Template\TemplateRenderer;
 use Framework\Http\ActionResolver;
 use Framework\Http\HttpApplication;
 use Framework\Http\MiddlewareResolver;
-use Framework\Template\TemplateRenderer;
+use Framework\Template\PhpRenderer;
 use Laminas\Diactoros\Response;
 
 return [
@@ -23,6 +24,6 @@ return [
     }),
 
     TemplateRenderer::class => DependencyInjection\factory(function () {
-        return new TemplateRenderer('templates');
+        return new PhpRenderer('templates');
     }),
 ];

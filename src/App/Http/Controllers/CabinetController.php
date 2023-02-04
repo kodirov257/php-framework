@@ -7,14 +7,14 @@ use DI\Attribute\Inject;
 use Framework\Http\Controller;
 use Framework\Http\Router\Attributes\Get;
 use Framework\Http\Router\Attributes\Middleware;
-use Framework\Template\TemplateRenderer;
+use Framework\Template\PhpRenderer;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Psr\Http\Message\ServerRequestInterface;
 
 class CabinetController extends Controller
 {
     #[Inject]
-    private TemplateRenderer $template;
+    private PhpRenderer $template;
 
     #[Get(name: 'cabinet', uri: '/cabinet')]
     #[Middleware(name: BasicAuthMiddleware::class)]
