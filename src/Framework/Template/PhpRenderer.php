@@ -8,7 +8,6 @@ class PhpRenderer implements TemplateRenderer
 {
     private string $path;
     private ?string $extend;
-    private array $params = [];
     private array $blocks = [];
     private \SplStack $blockNames;
 
