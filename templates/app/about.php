@@ -8,6 +8,10 @@
 
 <?php $this->params['title'] = 'About'; ?>
 
+<?php $this->beginBlock('meta'); ?>
+    <meta name="description" content="About page description" />
+<?php $this->endBlock(); ?>
+
 <?php $this->beginBlock('breadcrumbs'); ?>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
