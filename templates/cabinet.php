@@ -1,16 +1,21 @@
+<?php
+/* @var string $name */
+?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Hello - App</title>
+    <title>Cabinet - App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <style>
+        /*body { padding-top: 70px; }*/
         h1 { margin-top: 0 }
         .app { display: flex; min-height: 100vh; flex-direction: column; }
         .app-content { flex: 1; }
+        .app-footer { padding-bottom: 1em; }
     </style>
 </head>
 <body class="app">
@@ -33,18 +38,16 @@
 
 <div class="app-content pt-4">
     <main class="container">
-        <div class="jumbotron">
-            <h1>Hello!</h1>
-            <p>
-                Congratulations! You have successfully created your application.
-            </p>
-        </div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">Cabinet</li>
+            </ol>
+        </nav>
+
+        <h1>Cabinet of <?= htmlspecialchars($name, ENT_QUOTES | ENT_SUBSTITUTE) ?></h1>
     </main>
 </div>
-
-<!--    <div class="container">-->
-<!--        <h1>Hello, --><?php //= htmlspecialchars($name) ?><!--!</h1>-->
-<!--    </div>-->
 
 <footer class="text-center text-lg-start bg-light text-muted">
     <div class="container">

@@ -18,11 +18,8 @@ class HelloController extends Controller
     }
 
     #[Get(name: 'home', uri: '/')]
-    public function index(ServerRequestInterface $request)
+    public function index()
     {
-        $name = $request->getQueryParams()['name'] ?? 'Guest';
-        return new HtmlResponse($this->template->render('hello', [
-            'name' => $name,
-        ]));
+        return new HtmlResponse($this->template->render('hello'));
     }
 }
