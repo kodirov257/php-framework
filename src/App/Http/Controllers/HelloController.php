@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Framework\Contracts\Template\TemplateRenderer;
 use Framework\Http\Controller;
 use Framework\Http\Router\Attributes\Get;
-use Framework\Template\PhpRenderer;
 use Laminas\Diactoros\Response\HtmlResponse;
-use Psr\Http\Message\ServerRequestInterface;
 
 class HelloController extends Controller
 {
-    private PhpRenderer $template;
+    private TemplateRenderer $template;
 
-    public function __construct(PhpRenderer $template)
+    public function __construct(TemplateRenderer $template)
     {
         $this->template = $template;
     }
@@ -20,6 +19,6 @@ class HelloController extends Controller
     #[Get(name: 'home', uri: '/')]
     public function index()
     {
-        return new HtmlResponse($this->template->render('hello'));
+        return new HtmlResponse($this->template->render('app/hello'));
     }
 }

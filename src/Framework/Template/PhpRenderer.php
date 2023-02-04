@@ -7,6 +7,8 @@ use Framework\Contracts\Template\TemplateRenderer;
 class PhpRenderer implements TemplateRenderer
 {
     private string $path;
+    private $extend;
+    private array $params = [];
 
     public function __construct(string $path)
     {
@@ -19,7 +21,16 @@ class PhpRenderer implements TemplateRenderer
 
         ob_start();
         extract($params, EXTR_OVERWRITE);
+        $this->extend = null;
         require $templateFile;
-        return ob_get_clean();
+        $content = ob_get_clean();
+
+        if (!$this->extend) {
+            return $content;
+        }
+
+        return $this->render($this->extend, [
+            'content' => $content,
+        ]);
     }
 }

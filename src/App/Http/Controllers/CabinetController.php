@@ -4,17 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Middlewares\BasicAuthMiddleware;
 use DI\Attribute\Inject;
+use Framework\Contracts\Template\TemplateRenderer;
 use Framework\Http\Controller;
 use Framework\Http\Router\Attributes\Get;
 use Framework\Http\Router\Attributes\Middleware;
-use Framework\Template\PhpRenderer;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Psr\Http\Message\ServerRequestInterface;
 
 class CabinetController extends Controller
 {
     #[Inject]
-    private PhpRenderer $template;
+    private TemplateRenderer $template;
 
     #[Get(name: 'cabinet', uri: '/cabinet')]
     #[Middleware(name: BasicAuthMiddleware::class)]
@@ -22,7 +22,7 @@ class CabinetController extends Controller
     {
         $username = $request->getAttribute(BasicAuthMiddleware::ATTRIBUTE);
 
-        return new HtmlResponse($this->template->render('cabinet', [
+        return new HtmlResponse($this->template->render('app/cabinet', [
             'name' => $username,
         ]));
     }
