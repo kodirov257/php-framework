@@ -9,6 +9,15 @@
 
 <?php $this->params['title'] = 'Cabinet'; ?>
 
+<?php $this->beginBlock('sidebar'); ?>
+    <div class="panel panel-default" style="width: 25rem">
+        <div class="panel-heading">Cabinet</div>
+        <div class="panel-body">
+            Cabinet navigation
+        </div>
+    </div>
+<?php $this->endBlock(); ?>
+
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>

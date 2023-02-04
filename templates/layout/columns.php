@@ -10,11 +10,6 @@
         <?= $content ?>
     </div>
     <div class="col-md-3">
-        <div class="panel panel-default" style="width: 25rem">
-            <div class="panel-heading">Cabinet</div>
-            <div class="panel-body">
-                Cabinet navigation
-            </div>
-        </div>
+        <?= $this->renderBlock('sidebar'); ?>
     </div>
 </div>
