@@ -2,24 +2,14 @@
 
 namespace Framework;
 
+use DI\Definition\Source\MutableDefinitionSource;
+use DI\Proxy\ProxyFactory;
+use Framework\Container\Container;
 use Framework\Contracts\Application as ApplicationContract;
+use Psr\Container\ContainerInterface;
 
-class ApplicationInfo implements ApplicationContract
+class Application extends Container implements ApplicationContract
 {
-    /**
-     * The current globally available application (if any).
-     *
-     * @var static
-     */
-    protected static self $instance;
-
-    /**
-     * The application's shared instances
-     *
-     * @var object[]
-     */
-    private array $instances = [];
-
     /**
      * Framework version
      *
@@ -34,13 +24,20 @@ class ApplicationInfo implements ApplicationContract
      */
     protected string $basePath;
 
-    public function __construct(string $basePath = null)
-    {
+    public function __construct(
+        array|MutableDefinitionSource $definitions = [],
+        ProxyFactory $proxyFactory = null,
+        ContainerInterface $wrapperContainer = null,
+        string $basePath = null
+    ) {
+        parent::__construct($definitions, $proxyFactory, $wrapperContainer);
+
         if ($basePath) {
             $this->setBasePath($basePath);
         }
 
         $this->registerBaseBindings();
+        $this->registerCoreContainerAliases();
     }
 
     protected function registerBaseBindings(): void
@@ -48,6 +45,18 @@ class ApplicationInfo implements ApplicationContract
         static::setInstance($this);
 
         $this->registerInstance('app', $this);
+    }
+
+    private function registerCoreContainerAliases()
+    {
+        foreach ([
+            'app' => \Framework\Contracts\Application::class,
+            'configuration' => \Framework\Contracts\Config\Repository::class,
+            'router' => \Framework\Http\Router\Router::class,
+            'template' => \Framework\Contracts\Template\TemplateRenderer::class,
+         ] as $alias => $abstract) {
+            $this->alias($alias, $abstract);
+        }
     }
 
     public function getVersion(): string
@@ -76,31 +85,5 @@ class ApplicationInfo implements ApplicationContract
         $this->basePath = rtrim($basePath, '\/');
 
         return $this;
-    }
-
-    public static function setInstance(ApplicationContract $application = null): ApplicationContract|static
-    {
-        return static::$instance = $application;
-    }
-
-    public static function getInstance(): static
-    {
-        if (is_null(static::$instance)) {
-            static::$instance = new static;
-        }
-
-        return static::$instance;
-    }
-
-    public function registerInstance(string $abstract, mixed $instance): mixed
-    {
-        $this->instances[$abstract] = $instance;
-
-        return $instance;
-    }
-
-    public function resolveInstance(string $abstract): mixed
-    {
-        return $this->instances[$abstract];
     }
 }

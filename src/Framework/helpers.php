@@ -1,21 +1,20 @@
 <?php
 
-use Framework\ApplicationInfo;
+use Framework\Application;
 use Framework\Support\Environment;
 
 if (!function_exists('app')) {
     /**
      * @param string|null $abstract
-     * @param array $parameters
-     * @return mixed|ApplicationInfo
+     * @return mixed|Application
      */
     function app(string|null $abstract = null)
     {
         if (is_null($abstract)) {
-            return ApplicationInfo::getInstance();
+            return Application::getInstance();
         }
 
-        return ApplicationInfo::getInstance()->resolveInstance($abstract);
+        return Application::getInstance()->resolveInstance($abstract);
     }
 }
 
@@ -25,19 +24,21 @@ if (!function_exists('config')) {
      *
      * @param array|string|null $key
      * @param mixed $default
-     * @return mixed|\Framework\Config\Repository
+     * @return mixed|Framework\Config\Repository
      */
     function config(array|string|null $key = null, mixed $default = null)
     {
+        /* @var $config Framework\Config\Repository */
+        $config = app('configuration');
         if (is_null($key)) {
-            return app('config');
+            return $config;
         }
 
         if (is_array($key)) {
-            return app('config')->set($key);
+            return $config->set($key);
         }
 
-        return app('config')->get($key, $default);
+        return $config->get($key, $default);
     }
 }
 
@@ -66,5 +67,35 @@ if (!function_exists('value')) {
     function value(mixed $value, ...$args): mixed
     {
         return $value instanceof Closure ? $value(...$args) : $value;
+    }
+}
+
+if (!function_exists('route')) {
+    /**
+     * Generates the URL to a named route
+     *
+     * @param string $name
+     * @param array $params
+     * @return string
+     */
+    function route(string $name, array $params = []): string
+    {
+        return app('router')->generate($name, $params);
+    }
+}
+
+if (!function_exists('view')) {
+    /**
+     * Get the evaluated view contents for the given view
+     *
+     * @param string $view
+     * @param array $data
+     * @return Laminas\Diactoros\Response\HtmlResponse
+     */
+    function view(string $view, array $data = [])
+    {
+        /* @var $template Framework\Contracts\Template\TemplateRenderer */
+        $template = app('template');
+        return new \Laminas\Diactoros\Response\HtmlResponse($template->render($view, $data));
     }
 }

@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class Application implements MiddlewareInterface, RequestHandlerInterface
+class HttpApplication implements MiddlewareInterface, RequestHandlerInterface
 {
     private MiddlewareResolver $resolver;
     private RequestHandlerInterface $default;

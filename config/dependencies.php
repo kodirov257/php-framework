@@ -2,14 +2,14 @@
 
 use App\Http\Middlewares;
 use DI as DependencyInjection;
-use Psr\Container\ContainerInterface;
+use Framework\Contracts\Application as ApplicationInterface;
 
 return [
-    Middlewares\BasicAuthMiddleware::class => DependencyInjection\factory(function (ContainerInterface $container) {
+    Middlewares\BasicAuthMiddleware::class => DependencyInjection\factory(function (ApplicationInterface $container) {
         return new Middlewares\BasicAuthMiddleware($container->get('config')['users']);
     }),
 
-    Middlewares\ErrorHandlerMiddleware::class => DependencyInjection\factory(function (ContainerInterface $container) {
+    Middlewares\ErrorHandlerMiddleware::class => DependencyInjection\factory(function (ApplicationInterface $container) {
         return new Middlewares\ErrorHandlerMiddleware($container->get('config')['debug']);
     }),
 ];

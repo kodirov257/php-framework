@@ -2,7 +2,9 @@
 
 namespace Framework\Contracts;
 
-interface Application
+use Framework\Contracts\Container\Container;
+
+interface Application extends Container
 {
     /**
      * Get the version of framework
@@ -26,6 +28,4 @@ interface Application
      * @return string
      */
     public function getConfigPath(string $path = ''): string;
-
-    public function registerInstance(string $abstract, mixed $instance): mixed;
 }

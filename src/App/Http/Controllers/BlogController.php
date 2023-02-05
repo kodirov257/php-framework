@@ -2,32 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use App\ReadModel\PostReadRepository;
 use Framework\Http\Controller;
 use Framework\Http\Router\Attributes\Get;
-use Laminas\Diactoros\Response\HtmlResponse;
-use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ServerRequestInterface;
 
 class BlogController extends Controller
 {
+    private PostReadRepository $posts;
+
+    public function __construct(PostReadRepository $posts)
+    {
+        $this->posts = $posts;
+    }
+
     #[Get(name: 'blog', uri: '/blog')]
     public function index()
     {
-        return new JsonResponse([
-            ['id' => 2, 'title' => 'The Second Post'],
-            ['id' => 1, 'title' => 'The First Post'],
+        $posts = $this->posts->getAll();
+        return view('app/blog/index', [
+            'posts' => $posts,
         ]);
     }
 
     #[Get(name: 'blog_show', uri: '/blog/{id}', tokens: ['id' => '\d+'])]
     public function show(ServerRequestInterface $request)
     {
-        $id = $request->getAttribute('id');
-
-        if ($id > 2) {
-            return new HtmlResponse('Undefined page', 404);
+        if (!$post = $this->posts->find($request->getAttribute('id'))) {
+            return view('error/404', [
+                'request' => $request,
+            ])->withStatus(404);
         }
 
-        return new JsonResponse(['id' => $id, 'title' => 'Post #' . $id]);
+        return view('app/blog/show', [
+            'post' => $post,
+        ]);
     }
 }
