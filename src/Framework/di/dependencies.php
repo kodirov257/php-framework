@@ -6,6 +6,7 @@ use Framework\Contracts\Template\TemplateRenderer;
 use Framework\Http\ActionResolver;
 use Framework\Http\HttpApplication;
 use Framework\Http\MiddlewareResolver;
+use Framework\Http\Router\Router;
 use Framework\Template\PhpRenderer;
 use Laminas\Diactoros\Response;
 
@@ -23,7 +24,7 @@ return [
         return new ActionResolver($container);
     }),
 
-    TemplateRenderer::class => DependencyInjection\factory(function () {
-        return new PhpRenderer('templates');
+    TemplateRenderer::class => DependencyInjection\factory(function (ApplicationInterface $container) {
+        return new PhpRenderer('templates', $container->get(Router::class));
     }),
 ];

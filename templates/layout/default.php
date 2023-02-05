@@ -26,13 +26,13 @@
     <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                <li><a href="/" class="nav-link px-2 text-secondary ">Application</a></li>
+                <li><a href="<?= $this->encode($this->path('home')) ?>" class="nav-link px-2 text-secondary ">Application</a></li>
             </ul>
 
             <div class="text-end">
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="/about" class="nav-link px-2 text-white"><i class="bi bi-door-open"></i> About</a></li>
-                    <li><a href="/cabinet" class="nav-link px-2 text-white"><i class="bi bi-person"></i> Cabinet</a></li>
+                    <li><a href="<?= $this->encode($this->path('about')) ?>" class="nav-link px-2 text-white"><i class="bi bi-door-open"></i> About</a></li>
+                    <li><a href="<?= $this->encode($this->path('cabinet')) ?>" class="nav-link px-2 text-white"><i class="bi bi-person"></i> Cabinet</a></li>
                 </ul>
             </div>
         </div>

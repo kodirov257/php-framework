@@ -3,6 +3,7 @@
 namespace Framework\Template;
 
 use Framework\Contracts\Template\TemplateRenderer;
+use Framework\Http\Router\Router;
 
 class PhpRenderer implements TemplateRenderer
 {
@@ -10,11 +11,13 @@ class PhpRenderer implements TemplateRenderer
     private ?string $extend;
     private array $blocks = [];
     private \SplStack $blockNames;
+    private Router $router;
 
-    public function __construct(string $path)
+    public function __construct(string $path, Router $router)
     {
         $this->path = $path;
         $this->blockNames = new \SplStack();
+        $this->router = $router;
     }
 
     public function render(string $name, array $params = []): string
@@ -90,5 +93,10 @@ class PhpRenderer implements TemplateRenderer
     private function hasBlock(string $name): bool
     {
         return array_key_exists($name, $this->blocks);
+    }
+
+    public function path(string $name, array $params = []): string
+    {
+        return $this->router->generate($name, $params);
     }
 }
