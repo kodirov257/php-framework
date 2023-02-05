@@ -23,7 +23,9 @@
         <p>Code: <?= $this->encode($exception->getCode()) ?></p>
         <p><?= $this->encode($exception->getFile()) ?> on line <?= $this->encode($exception->getLine()) ?></p>
         <?php foreach ($exception->getTrace() as $trace): ?>
-            <p><?= $this->encode($trace['file']) ?> on line <?= $this->encode($trace['line']) ?></p>
+            <?php if (isset($trace['file']) && $trace['line']): ?>
+                <p><?= $this->encode($trace['file']) ?> on line <?= $this->encode($trace['line']) ?></p>
+            <?php endif; ?>
         <?php endforeach; ?>
     </main>
 </div>
