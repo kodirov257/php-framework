@@ -72,6 +72,8 @@ if (!function_exists('value')) {
 
 if (!function_exists('route')) {
     /**
+     * Generates the URL to a named route
+     *
      * @param string $name
      * @param array $params
      * @return string
@@ -79,5 +81,21 @@ if (!function_exists('route')) {
     function route(string $name, array $params = []): string
     {
         return app('router')->generate($name, $params);
+    }
+}
+
+if (!function_exists('view')) {
+    /**
+     * Get the evaluated view contents for the given view
+     *
+     * @param string $view
+     * @param array $data
+     * @return Laminas\Diactoros\Response\HtmlResponse
+     */
+    function view(string $view, array $data = [])
+    {
+        /* @var $template Framework\Contracts\Template\TemplateRenderer */
+        $template = app('template');
+        return new \Laminas\Diactoros\Response\HtmlResponse($template->render($view, $data));
     }
 }

@@ -53,6 +53,7 @@ class Application extends Container implements ApplicationContract
             'app' => \Framework\Contracts\Application::class,
             'configuration' => \Framework\Contracts\Config\Repository::class,
             'router' => \Framework\Http\Router\Router::class,
+            'template' => \Framework\Contracts\Template\TemplateRenderer::class,
          ] as $alias => $abstract) {
             $this->alias($alias, $abstract);
         }

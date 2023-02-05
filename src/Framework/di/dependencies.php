@@ -6,7 +6,6 @@ use Framework\Contracts\Template\TemplateRenderer;
 use Framework\Http\ActionResolver;
 use Framework\Http\HttpApplication;
 use Framework\Http\MiddlewareResolver;
-use Framework\Http\Router\Router;
 use Framework\Template\Php\Extension\RouteExtension;
 use Framework\Template\Php\PhpRenderer;
 use Laminas\Diactoros\Response;
