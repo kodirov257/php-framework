@@ -13,7 +13,7 @@ use Laminas\Diactoros\Response;
 return [
     HttpApplication::class => DependencyInjection\factory(function (ApplicationInterface $container) {
         $notFoundHandler = config('app.not_found_handler') ?? Framework\Http\Middleware\NotFoundHandler::class;
-        return new HttpApplication($container->get(MiddlewareResolver::class), new $notFoundHandler());
+        return new HttpApplication($container->get(MiddlewareResolver::class), $container->get($notFoundHandler));
     }),
 
     MiddlewareResolver::class => DependencyInjection\factory(function (ApplicationInterface $container) {

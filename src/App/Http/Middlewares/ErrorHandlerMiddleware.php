@@ -2,6 +2,7 @@
 
 namespace App\Http\Middlewares;
 
+use Framework\Contracts\Template\TemplateRenderer;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -12,10 +13,12 @@ use Psr\Http\Server\RequestHandlerInterface;
 class ErrorHandlerMiddleware implements MiddlewareInterface
 {
     private bool $debug;
+    private TemplateRenderer $template;
 
-    public function __construct(bool $debug = true)
+    public function __construct(bool $debug, TemplateRenderer $template)
     {
         $this->debug = $debug;
+        $this->template = $template;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -23,15 +26,11 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         try {
             return $handler->handle($request);
         } catch (\Throwable $e) {
-            if ($this->debug) {
-                return new JsonResponse([
-                    'error' => 'Server error',
-                    'code' => $e->getCode(),
-                    'message' => $e->getMessage(),
-                    'trace' => $e->getTrace(),
-                ], 500);
-            }
-            return new HtmlResponse('Server error', 500);
+            $view = $this->debug ? 'error/error-debug' : 'error/error';
+            return new HtmlResponse($this->template->render($view, [
+                'request' => $request,
+                'exception' => $e,
+            ]), $e->getCode() ?: 500);
         }
     }
 }
