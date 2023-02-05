@@ -31,9 +31,9 @@
 
             <div class="text-end">
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="<?= $this->encode($this->path('blog')) ?>" class="nav-link px-2 text-white"><i class="bi bi-door-open"></i> Blog</a></li>
-                    <li><a href="<?= $this->encode($this->path('about')) ?>" class="nav-link px-2 text-white"><i class="bi bi-door-open"></i> About</a></li>
-                    <li><a href="<?= $this->encode($this->path('cabinet')) ?>" class="nav-link px-2 text-white"><i class="bi bi-person"></i> Cabinet</a></li>
+                    <li><a href="<?= $this->encode(route('blog')) ?>" class="nav-link px-2 text-white"><i class="bi bi-door-open"></i> Blog</a></li>
+                    <li><a href="<?= $this->encode(route('about')) ?>" class="nav-link px-2 text-white"><i class="bi bi-door-open"></i> About</a></li>
+                    <li><a href="<?= $this->encode(route('cabinet')) ?>" class="nav-link px-2 text-white"><i class="bi bi-person"></i> Cabinet</a></li>
                 </ul>
             </div>
         </div>

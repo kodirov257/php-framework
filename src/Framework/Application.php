@@ -2,28 +2,14 @@
 
 namespace Framework;
 
-use DI\Container;
 use DI\Definition\Source\MutableDefinitionSource;
 use DI\Proxy\ProxyFactory;
+use Framework\Container\Container;
 use Framework\Contracts\Application as ApplicationContract;
 use Psr\Container\ContainerInterface;
 
 class Application extends Container implements ApplicationContract
 {
-    /**
-     * The current globally available application (if any).
-     *
-     * @var static
-     */
-    protected static self $instance;
-
-    /**
-     * The application's shared instances
-     *
-     * @var object[]
-     */
-    private array $instances = [];
-
     /**
      * Framework version
      *
@@ -51,6 +37,7 @@ class Application extends Container implements ApplicationContract
         }
 
         $this->registerBaseBindings();
+        $this->registerCoreContainerAliases();
     }
 
     protected function registerBaseBindings(): void
@@ -58,6 +45,17 @@ class Application extends Container implements ApplicationContract
         static::setInstance($this);
 
         $this->registerInstance('app', $this);
+    }
+
+    private function registerCoreContainerAliases()
+    {
+        foreach ([
+            'app' => \Framework\Contracts\Application::class,
+            'configuration' => \Framework\Contracts\Config\Repository::class,
+            'router' => \Framework\Http\Router\Router::class,
+         ] as $alias => $abstract) {
+            $this->alias($alias, $abstract);
+        }
     }
 
     public function getVersion(): string
@@ -86,31 +84,5 @@ class Application extends Container implements ApplicationContract
         $this->basePath = rtrim($basePath, '\/');
 
         return $this;
-    }
-
-    public static function setInstance(ApplicationContract $application = null): ApplicationContract|static
-    {
-        return static::$instance = $application;
-    }
-
-    public static function getInstance(): static
-    {
-        if (is_null(static::$instance)) {
-            static::$instance = new static;
-        }
-
-        return static::$instance;
-    }
-
-    public function registerInstance(string $abstract, mixed $instance): mixed
-    {
-        $this->set($abstract, $instance);
-
-        return $instance;
-    }
-
-    public function resolveInstance(string $abstract): mixed
-    {
-        return $this->get($abstract);
     }
 }

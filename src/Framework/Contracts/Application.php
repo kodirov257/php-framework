@@ -2,9 +2,9 @@
 
 namespace Framework\Contracts;
 
-use Psr\Container\ContainerInterface;
+use Framework\Contracts\Container\Container;
 
-interface Application extends ContainerInterface
+interface Application extends Container
 {
     /**
      * Get the version of framework
@@ -28,36 +28,4 @@ interface Application extends ContainerInterface
      * @return string
      */
     public function getConfigPath(string $path = ''): string;
-
-    /**
-     * Set application instance.
-     *
-     * @param Application|null $application
-     * @return static
-     */
-    public static function setInstance(self $application = null): self|static;
-
-    /**
-     * Get the application instance.
-     *
-     * @return static
-     */
-    public static function getInstance(): static;
-
-    /**
-     * Register instance to container.
-     *
-     * @param string $abstract
-     * @param mixed $instance
-     * @return mixed
-     */
-    public function registerInstance(string $abstract, mixed $instance): mixed;
-
-    /**
-     * Get the instance from container.
-     *
-     * @param string $abstract
-     * @return mixed
-     */
-    public function resolveInstance(string $abstract): mixed;
 }

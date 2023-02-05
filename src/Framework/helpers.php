@@ -69,3 +69,15 @@ if (!function_exists('value')) {
         return $value instanceof Closure ? $value(...$args) : $value;
     }
 }
+
+if (!function_exists('route')) {
+    /**
+     * @param string $name
+     * @param array $params
+     * @return string
+     */
+    function route(string $name, array $params = []): string
+    {
+        return app('router')->generate($name, $params);
+    }
+}
