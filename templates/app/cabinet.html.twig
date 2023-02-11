@@ -1,0 +1,25 @@
+{% extends 'layout/columns.html.twig' %}
+
+{% block title %}Cabinet Page title{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('home') }}">Home</a></li>
+        <li class="breadcrumb-item active">Cabinet</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="panel panel-default" style="width: 25rem">
+        <div class="panel-heading">Cabinet</div>
+        <div class="panel-body">
+            Cabinet navigation
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <h1>Cabinet of {{ name }}</h1>
+{% endblock %}
