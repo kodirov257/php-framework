@@ -6,8 +6,7 @@ use Framework\Contracts\Template\TemplateRenderer;
 use Framework\Http\ActionResolver;
 use Framework\Http\HttpApplication;
 use Framework\Http\MiddlewareResolver;
-use Framework\Template\Php\Extension\RouteExtension;
-use Framework\Template\Php\PhpRenderer;
+use Framework\Template\Twig\Extension\RouteExtension;
 use Framework\Template\Twig\TwigRenderer;
 use Laminas\Diactoros\Response;
 
@@ -60,6 +59,8 @@ return [
         if ($debug) {
             $environment->addExtension(new Twig\Extension\DebugExtension());
         }
+
+        $environment->addExtension($container->get(RouteExtension::class));
 
         return $environment;
     }),
