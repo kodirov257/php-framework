@@ -25,19 +25,19 @@ return [
     }),
 
     TemplateRenderer::class => DependencyInjection\factory(function (ApplicationInterface $container) {
-        return new TwigRenderer($container->get(Twig\Environment::class), '.html.twig');
+        return new TwigRenderer($container->get(Twig\Environment::class), config('templates.extension'));
     }),
 
     Twig\Environment::class => DependencyInjection\factory(function (ApplicationInterface $container) {
-        $templateDir = 'templates';
-        $cacheDir = 'var/cache/twig';
+        $template = config('templates.template');
+        $config = config('templates.' . $template);
         $debug = $container->get('config')['debug'];
 
         $loader = new Twig\Loader\FilesystemLoader();
-        $loader->addPath($templateDir);
+        $loader->addPath($config['template_dir']);
 
         $environment = new Twig\Environment($loader, [
-            'cache' => $debug ? false : $cacheDir,
+            'cache' => $debug ? false : $config['cache_dir'],
             'debug' => $debug,
             'strict_variables' => $debug,
             'auto_reload' => $debug,
@@ -61,6 +61,10 @@ return [
         }
 
         $environment->addExtension($container->get(RouteExtension::class));
+
+        foreach ($config['extensions'] as $extension) {
+            $environment->addExtension($container->get($extension));
+        }
 
         return $environment;
     }),
