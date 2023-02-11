@@ -1,17 +1,12 @@
-<?php
-/**
- * @var \Framework\Template\Php\PhpRenderer $this
- */
-?>
-<?php $this->extend('layout/default'); ?>
+{% extends 'layout/default.html.twig' %}
 
-<?php $this->beginBlock('content'); ?>
+{% block content %}
     <div class="row">
         <div class="col-md-9">
-            <?= $this->renderBlock('main') ?>
+            {% block main %}{% endblock %}
         </div>
         <div class="col-md-3">
-            <?php $this->block('sidebar', function () { ob_start(); ?>
+            {% block sidebar %}
                 <div class="panel panel-default" style="width: 25rem">
                     <div class="panel-heading">Site</div>
                     <div class="panel-body">
@@ -19,7 +14,7 @@
                     </div>
                 </div>
             <?php return ob_get_clean(); }); ?>
-            <?= $this->renderBlock('sidebar'); ?>
+            {% endblock %}
         </div>
     </div>
-<?php $this->endBlock(); ?>
+{% endblock %}

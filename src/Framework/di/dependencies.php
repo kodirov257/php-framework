@@ -8,6 +8,7 @@ use Framework\Http\HttpApplication;
 use Framework\Http\MiddlewareResolver;
 use Framework\Template\Php\Extension\RouteExtension;
 use Framework\Template\Php\PhpRenderer;
+use Framework\Template\Twig\TwigRenderer;
 use Laminas\Diactoros\Response;
 
 return [
@@ -25,8 +26,41 @@ return [
     }),
 
     TemplateRenderer::class => DependencyInjection\factory(function (ApplicationInterface $container) {
-        $renderer = new PhpRenderer('templates');
-        $renderer->addExtension($container->get(RouteExtension::class));
-        return $renderer;
+        return new TwigRenderer($container->get(Twig\Environment::class), '.html.twig');
+    }),
+
+    Twig\Environment::class => DependencyInjection\factory(function (ApplicationInterface $container) {
+        $templateDir = 'templates';
+        $cacheDir = 'var/cache/twig';
+        $debug = $container->get('config')['debug'];
+
+        $loader = new Twig\Loader\FilesystemLoader();
+        $loader->addPath($templateDir);
+
+        $environment = new Twig\Environment($loader, [
+            'cache' => $debug ? false : $cacheDir,
+            'debug' => $debug,
+            'strict_variables' => $debug,
+            'auto_reload' => $debug,
+        ]);
+
+        $issetFunction = new Twig\TwigFunction('isset', function ($value) {
+            return isset($value);
+        });
+        $emptyFunction = new Twig\TwigFunction('empty', function ($value) {
+            return empty($value);
+        });
+        $routeFunction = new Twig\TwigFunction('route', function (string $name, array $params = []) {
+            return route($name, $params);
+        });
+        $environment->addFunction($issetFunction);
+        $environment->addFunction($emptyFunction);
+        $environment->addFunction($routeFunction);
+
+        if ($debug) {
+            $environment->addExtension(new Twig\Extension\DebugExtension());
+        }
+
+        return $environment;
     }),
 ];
