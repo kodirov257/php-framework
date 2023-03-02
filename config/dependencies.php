@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Middlewares;
+use App\Http\Middlewares\ErrorHandler\ErrorHandlerMiddleware;
+use App\Http\Middlewares\ErrorHandler\ErrorResponseGenerator;
+use App\Http\Middlewares\ErrorHandler\PrettyErrorResponseGenerator;
 use DI as DependencyInjection;
 use Framework\Contracts\Application as ApplicationInterface;
 use Laminas\Diactoros\Response;
@@ -10,7 +13,11 @@ return [
         return new Middlewares\BasicAuthMiddleware($container->get('config')['users'], new Response());
     }),
 
-    Middlewares\ErrorHandlerMiddleware::class => DependencyInjection\factory(function (ApplicationInterface $container) {
-        return new Middlewares\ErrorHandlerMiddleware($container->get('config')['debug']);
+    ErrorHandlerMiddleware::class => DependencyInjection\factory(function (ApplicationInterface $container) {
+        return new ErrorHandlerMiddleware($container->get(ErrorResponseGenerator::class));
+    }),
+
+    ErrorResponseGenerator::class => DependencyInjection\factory(function (ApplicationInterface $container) {
+        return new PrettyErrorResponseGenerator($container->get('config')['debug']);
     }),
 ];
