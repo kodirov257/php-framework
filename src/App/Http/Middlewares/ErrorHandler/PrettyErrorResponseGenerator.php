@@ -2,26 +2,36 @@
 
 namespace App\Http\Middlewares\ErrorHandler;
 
-use Laminas\Diactoros\Response;
+use Framework\Contracts\Template\TemplateRenderer;
 use Laminas\Stratigility\Utils;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class PrettyErrorResponseGenerator implements ErrorResponseGenerator
 {
+    private TemplateRenderer $template;
+    private ResponseInterface $response;
     private array $views;
-    public function __construct(array $views)
+
+    public function __construct(TemplateRenderer $template, ResponseInterface $response, array $views)
     {
+        $this->template = $template;
+        $this->response = $response;
         $this->views = $views;
     }
 
     public function generate(\Throwable $e, ServerRequestInterface $request): ResponseInterface
     {
-        $code = Utils::getStatusCode($e, new Response());
-        return view($this->getView($code), [
+        $code = Utils::getStatusCode($e, $this->response);
+
+        $response = $this->response->withStatus($code);
+        $response
+            ->getBody()
+            ->write($this->template->render($this->getView($code), [
             'request' => $request,
             'exception' => $e,
-        ])->withStatus($code);
+        ]));
+        return $response;
     }
 
     private function getView(int $code): string
