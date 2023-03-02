@@ -13,10 +13,12 @@ class BasicAuthMiddleware implements MiddlewareInterface
     public const ATTRIBUTE = '_user';
 
     private array $users;
+    private ResponseInterface $responsePrototype;
 
-    public function __construct(array $users)
+    public function __construct(array $users, ResponseInterface $responsePrototype)
     {
         $this->users = $users;
+        $this->responsePrototype = $responsePrototype;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -32,6 +34,8 @@ class BasicAuthMiddleware implements MiddlewareInterface
             }
         }
 
-        return new EmptyResponse(401, ['WWW-Authenticate' => 'Basic realm=Restricted area']);
+        return $this->responsePrototype
+            ->withStatus(401)
+            ->withHeader('WWW-Authenticate', 'Basic realm=Restricted area');
     }
 }
