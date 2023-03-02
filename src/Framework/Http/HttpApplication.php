@@ -2,6 +2,7 @@
 
 namespace Framework\Http;
 
+use Laminas\Stratigility\Middleware\PathMiddlewareDecorator;
 use Laminas\Stratigility\MiddlewarePipe;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,9 +22,13 @@ class HttpApplication implements MiddlewareInterface, RequestHandlerInterface
         $this->pipeline = new MiddlewarePipe();
     }
 
-    public function pipe($middleware):void
+    public function pipe($path, $middleware = null):void
     {
-        $this->pipeline->pipe($this->resolver->resolve($middleware));
+        if ($middleware === null) {
+            $this->pipeline->pipe($this->resolver->resolve($path));
+        } else {
+            $this->pipeline->pipe(new PathMiddlewareDecorator($path, $this->resolver->resolve($middleware)));
+        }
     }
 
     public function run(ServerRequestInterface $request): ResponseInterface

@@ -2,7 +2,6 @@
 
 namespace Tests\Framework\Http\Pipeline;
 
-use Framework\Application;
 use Framework\Http\MiddlewareResolver;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\EmptyResponse;
@@ -13,6 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Tests\Framework\Http\DummyContainer;
 
 class MiddlewareResolverTest extends TestCase
 {
@@ -22,7 +22,7 @@ class MiddlewareResolverTest extends TestCase
      */
     public function testDirect($handler): void
     {
-        $resolver = new MiddlewareResolver(new Response(), new Application());
+        $resolver = new MiddlewareResolver(new DummyContainer(), new Response());
         $middleware = $resolver->resolve($handler);
 
         $response = $middleware->process(
@@ -39,7 +39,7 @@ class MiddlewareResolverTest extends TestCase
      */
     public function testNext($handler): void
     {
-        $resolver = new MiddlewareResolver(new Response(), new Application());
+        $resolver = new MiddlewareResolver(new DummyContainer(), new Response());
         $middleware = $resolver->resolve($handler);
 
         $response = $middleware->process(
@@ -78,7 +78,7 @@ class MiddlewareResolverTest extends TestCase
 
     public function testHandler(): void
     {
-        $resolver = new MiddlewareResolver(new Response(), new Application());
+        $resolver = new MiddlewareResolver(new DummyContainer(), new Response());
         $middleware = $resolver->resolve(PsrHandler::class);
 
         $response = $middleware->process(
@@ -91,7 +91,7 @@ class MiddlewareResolverTest extends TestCase
 
     public function testArray(): void
     {
-        $resolver = new MiddlewareResolver(new Response(), new Application());
+        $resolver = new MiddlewareResolver(new DummyContainer(), new Response());
         $middleware = $resolver->resolve([
             new DummyMiddleware(),
             new SinglePassMiddleware(),

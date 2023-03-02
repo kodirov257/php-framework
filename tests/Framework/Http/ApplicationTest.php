@@ -2,7 +2,6 @@
 
 namespace Tests\Framework\Http;
 
-use Framework\Application;
 use Framework\Http\HttpApplication;
 use Framework\Http\MiddlewareResolver;
 use Laminas\Diactoros\Response;
@@ -16,9 +15,17 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class ApplicationTest extends TestCase
 {
+    private MiddlewareResolver $resolver;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->resolver = new MiddlewareResolver(new DummyContainer(), new Response());
+    }
+
     public function testPipe(): void
     {
-        $app = new HttpApplication(new MiddlewareResolver(new Response(), new Application()), new DefaultHandler());
+        $app = new HttpApplication($this->resolver, new DefaultHandler());
 
         $app->pipe(new Middleware1());
         $app->pipe(new Middleware2());

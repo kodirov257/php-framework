@@ -17,7 +17,7 @@ return [
     }),
 
     MiddlewareResolver::class => DependencyInjection\factory(function (ApplicationInterface $container) {
-        return new MiddlewareResolver(new Response(), $container);
+        return new MiddlewareResolver($container, new Response());
     }),
 
     ActionResolver::class => DependencyInjection\factory(function (ApplicationInterface $container) {
