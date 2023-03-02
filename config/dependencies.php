@@ -18,6 +18,14 @@ return [
     }),
 
     ErrorResponseGenerator::class => DependencyInjection\factory(function (ApplicationInterface $container) {
-        return new PrettyErrorResponseGenerator($container->get('config')['debug']);
+        return new PrettyErrorResponseGenerator(
+            $container->get('config')['debug']
+                ? ['error' => 'error/error-debug']
+                : [
+                    '403' => 'error/403',
+                    '404' => 'error/404',
+                    'error' => 'error/error',
+                ]
+        );
     }),
 ];

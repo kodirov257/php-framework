@@ -8,19 +8,19 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class PrettyErrorResponseGenerator implements ErrorResponseGenerator
 {
-    private bool $debug;
-    public function __construct(bool $debug)
+    private array $views;
+    public function __construct(array $views)
     {
-        $this->debug = $debug;
+        $this->views = $views;
     }
 
     public function generate(\Throwable $e, ServerRequestInterface $request): ResponseInterface
     {
-        $view = $this->debug ? 'error/error-debug' : 'error/error';
-        return view($view, [
+        $code = self::getStatusCode($e);
+        return view($this->getView($code), [
             'request' => $request,
             'exception' => $e,
-        ])->withStatus(self::getStatusCode($e));
+        ])->withStatus($code);
     }
 
     private static function getStatusCode(\Throwable $e): int
@@ -30,5 +30,15 @@ class PrettyErrorResponseGenerator implements ErrorResponseGenerator
             return $code;
         }
         return 500;
+    }
+
+    private function getView(int $code): string
+    {
+        if (array_key_exists($code, $this->views)) {
+            $view = $this->views[$code];
+        } else {
+            $view = $this->views['error'];
+        }
+        return $view;
     }
 }
