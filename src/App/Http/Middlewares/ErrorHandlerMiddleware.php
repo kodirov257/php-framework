@@ -25,7 +25,16 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             return view($view, [
                 'request' => $request,
                 'exception' => $e,
-            ])->withStatus($e->getCode() ?: 500);
+            ])->withStatus(self::getStatusCode($e));
         }
+    }
+
+    private static function getStatusCode(\Throwable $e): int
+    {
+        $code = $e->getCode();
+        if ($code >= 400 && $code <= 600) {
+            return $code;
+        }
+        return 500;
     }
 }
