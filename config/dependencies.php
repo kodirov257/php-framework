@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middlewares;
+use App\Http\Middlewares\ErrorHandler\DebugErrorResponseGenerator;
 use App\Http\Middlewares\ErrorHandler\ErrorHandlerMiddleware;
 use App\Http\Middlewares\ErrorHandler\ErrorResponseGenerator;
 use App\Http\Middlewares\ErrorHandler\PrettyErrorResponseGenerator;
@@ -18,14 +19,15 @@ return [
     }),
 
     ErrorResponseGenerator::class => DependencyInjection\factory(function (ApplicationInterface $container) {
+        if ($container->get('config')['debug']) {
+            return new DebugErrorResponseGenerator('error/error-debug');
+        }
         return new PrettyErrorResponseGenerator(
-            $container->get('config')['debug']
-                ? ['error' => 'error/error-debug']
-                : [
-                    '403' => 'error/403',
-                    '404' => 'error/404',
-                    'error' => 'error/error',
-                ]
+            [
+                '403' => 'error/403',
+                '404' => 'error/404',
+                'error' => 'error/error',
+            ]
         );
     }),
 ];
