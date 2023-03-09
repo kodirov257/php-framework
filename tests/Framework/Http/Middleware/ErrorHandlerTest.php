@@ -13,24 +13,12 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 
-class ErrorHandler extends TestCase
+class ErrorHandlerTest extends TestCase
 {
-    private ErrorHandlerMiddleware $handler;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        /* @var MockObject|LoggerInterface $logger */
-        $logger = $this->createMock(LoggerInterface::class);
-        $logger->method('error')->willReturn(null);
-
-        $this->handler = new ErrorHandlerMiddleware(new DummyGenerator(), $logger);
-    }
-
     public function testNone(): void
     {
-        $response = $this->handler->process(new ServerRequest(), new CorrectAction());
+        $handler = new ErrorHandlerMiddleware(new DummyGenerator());
+        $response = $handler->process(new ServerRequest(), new CorrectAction());
 
         self::assertEquals('Content', $response->getBody()->getContents());
         self::assertEquals(200, $response->getStatusCode());
@@ -38,7 +26,8 @@ class ErrorHandler extends TestCase
 
     public function testException(): void
     {
-        $response = $this->handler->process(new ServerRequest(), new ErrorAction());
+        $handler = new ErrorHandlerMiddleware(new DummyGenerator());
+        $response = $handler->process(new ServerRequest(), new ErrorAction());
 
         self::assertEquals('Runtime Error', $response->getBody()->getContents());
         self::assertEquals(500, $response->getStatusCode());
