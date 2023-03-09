@@ -6,11 +6,11 @@ use Framework\Contracts\Template\TemplateRenderer;
 use Framework\Http\ActionResolver;
 use Framework\Http\HttpApplication;
 use Framework\Http\Middleware\ErrorHandler\ErrorResponseGenerator;
-use Framework\Http\Middleware\ErrorHandler\PrettyErrorResponseGenerator;
 use Framework\Http\Middleware\ErrorHandler\WhoopsErrorResponseGenerator;
 use Framework\Http\MiddlewareResolver;
 use Framework\Template\Twig\Extension\RouteExtension;
 use Framework\Template\Twig\TwigRenderer;
+use Infrastructure\Framework\Http\Middleware\ErrorHandler\PrettyErrorResponseGenerator;
 use Laminas\Diactoros\Response;
 
 return [

@@ -1,8 +1,9 @@
 <?php
 
-namespace Framework\Http\Middleware\ErrorHandler;
+namespace Infrastructure\Framework\Http\Middleware\ErrorHandler;
 
 use Framework\Contracts\Template\TemplateRenderer;
+use Framework\Http\Middleware\ErrorHandler\ErrorResponseGenerator;
 use Laminas\Stratigility\Utils;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

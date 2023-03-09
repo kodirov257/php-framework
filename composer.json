@@ -31,7 +31,8 @@
         ],
         "psr-4": {
             "App\\": "src/App/",
-            "Framework\\": "src/Framework/"
+            "Framework\\": "src/Framework/",
+            "Infrastructure\\": "src/Infrastructure/"
         }
     },
     "autoload-dev": {
