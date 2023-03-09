@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Middlewares\ErrorHandler;
+namespace Framework\Http\Middleware\ErrorHandler;
 
 use Framework\Contracts\Template\TemplateRenderer;
 use Laminas\Stratigility\Utils;

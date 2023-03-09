@@ -51,7 +51,7 @@ return [
      */
     'containers' => [
         \App\Http\Middlewares\BasicAuthMiddleware::class,
-        \App\Http\Middlewares\ErrorHandler\ErrorHandlerMiddleware::class,
+        \Framework\Http\Middleware\ErrorHandler\ErrorHandlerMiddleware::class,
     ],
 
     'not_found_handler' => App\Http\Middlewares\NotFoundHandler::class,

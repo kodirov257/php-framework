@@ -5,6 +5,9 @@ use Framework\Contracts\Application as ApplicationInterface;
 use Framework\Contracts\Template\TemplateRenderer;
 use Framework\Http\ActionResolver;
 use Framework\Http\HttpApplication;
+use Framework\Http\Middleware\ErrorHandler\ErrorResponseGenerator;
+use Framework\Http\Middleware\ErrorHandler\PrettyErrorResponseGenerator;
+use Framework\Http\Middleware\ErrorHandler\WhoopsErrorResponseGenerator;
 use Framework\Http\MiddlewareResolver;
 use Framework\Template\Twig\Extension\RouteExtension;
 use Framework\Template\Twig\TwigRenderer;
@@ -67,5 +70,32 @@ return [
         }
 
         return $environment;
+    }),
+
+    ErrorResponseGenerator::class => DependencyInjection\factory(function (ApplicationInterface $container) {
+        if ($container->get('config')['debug']) {
+            return new WhoopsErrorResponseGenerator(
+                $container->get(Whoops\RunInterface::class),
+                new Laminas\Diactoros\Response()
+            );
+        }
+        return new PrettyErrorResponseGenerator(
+            $container->get(TemplateRenderer::class),
+            new Laminas\Diactoros\Response(),
+            [
+                '403' => 'error/403',
+                '404' => 'error/404',
+                'error' => 'error/error',
+            ]
+        );
+    }),
+
+    Whoops\RunInterface::class => DependencyInjection\factory(function () {
+        $whoops = new Whoops\Run();
+        $whoops->allowQuit(false);
+        $whoops->writeToOutput(false);
+        $whoops->pushHandler(new Whoops\Handler\PrettyPageHandler());
+        $whoops->register();
+        return $whoops;
     }),
 ];
