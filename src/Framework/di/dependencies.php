@@ -98,4 +98,13 @@ return [
         $whoops->register();
         return $whoops;
     }),
+
+    Psr\Log\LoggerInterface::class => DependencyInjection\factory(function (ApplicationInterface $container) {
+        $logger = new Monolog\Logger('App');
+        $logger->pushHandler(new Monolog\Handler\StreamHandler(
+            'var/log/application.log',
+            $container->get('config')['debug'] ? Monolog\Logger::DEBUG : Monolog\Logger::WARNING
+        ));
+        return $logger;
+    }),
 ];
