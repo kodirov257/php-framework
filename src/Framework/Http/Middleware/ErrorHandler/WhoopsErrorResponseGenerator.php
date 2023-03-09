@@ -26,7 +26,7 @@ class WhoopsErrorResponseGenerator implements ErrorResponseGenerator
                 $this->prepareWhoopsHandler($request, $handler);
             }
         }
-        
+
         $response = $this->response->withStatus(Utils::getStatusCode($e, $this->response));
 
         $response

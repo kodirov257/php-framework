@@ -15,5 +15,4 @@ interface Repository
     public function prepend(string $key, mixed $value): void;
 
     public function push(string $key, mixed $value): void;
-
 }

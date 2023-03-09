@@ -49,5 +49,4 @@ interface Container extends ContainerInterface
      * @throws \LogicException
      */
     public function alias(string $abstract, string $alias): void;
-
 }

@@ -57,15 +57,18 @@ class Router implements Registrar
                     /* @var $route Attributes\Route */
                     $route = $attribute->newInstance();
 
-                    $this->add($route->name, $route->uri,
+                    $this->add(
+                        $route->name,
+                        $route->uri,
                         empty($middleware)
                             ? [$method->getDeclaringClass()->getName(), $method->getName()]
                             : ['middleware' => $middlewares, 'action' => [$method->getDeclaringClass()->getName(), $method->getName()]],
-                        $route->methods, $route->tokens);
+                        $route->methods,
+                        $route->tokens
+                    );
                 }
             }
         }
-
     }
 
     public function add($name, $uri, $action, array $methods, array $tokens = []): Route
@@ -110,18 +113,18 @@ class Router implements Registrar
                 if (!\is_int($key)) {
                     if ($key === 'middleware') {
                         $this->routerHandler->setMiddlewares($parameter);
-                    } else if ($key === 'action') {
+                    } elseif ($key === 'action') {
                         $this->matchAction($parameter);
-                    } else if ($key === 'controller') {
+                    } elseif ($key === 'controller') {
                         $this->routerHandler->setController($parameter);
-                    } else if ($key === 'method') {
+                    } elseif ($key === 'method') {
                         $this->routerHandler->setMethod($parameter);
-                    } else if ($key === '_route') {
+                    } elseif ($key === '_route') {
                         $routeName = $parameter;
                     } else {
                         $attributes[$key] = $parameter;
                     }
-                } else if (\is_callable($parameter)) {
+                } elseif (\is_callable($parameter)) {
                     $this->routerHandler->setAction($parameter);
                 } elseif (\is_object($parameter)) {
                     if (strpos(get_class($parameter), 'Controller')) {
@@ -146,11 +149,11 @@ class Router implements Registrar
             foreach ($parameter as $value) {
                 $this->matchAction($value);
             }
-        } else if (\is_callable($parameter)) {
+        } elseif (\is_callable($parameter)) {
             $this->routerHandler->setAction($parameter);
-        } else if (strpos($parameter, 'Controller')) {
+        } elseif (strpos($parameter, 'Controller')) {
             $this->routerHandler->setController($parameter);
-        } else if (is_string($parameter)) {
+        } elseif (is_string($parameter)) {
             $this->routerHandler->setMethod($parameter);
         } else {
             throw new InsufficientMatchParametersException($parameter);
