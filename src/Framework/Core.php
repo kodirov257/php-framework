@@ -24,7 +24,7 @@ class Core implements HttpKernelInterface
          * @var $router Router
          * @var $container Application
          */
-        $container = $this->setContainer();
+        $container = self::InitializeContainer();
         $this->setConfiguration();
         $app = $container->get(HttpApplication::class);
         $router = $container->get(Router::class);
@@ -67,7 +67,7 @@ class Core implements HttpKernelInterface
         $configLoader->bootstrap(Application::getInstance()->setBasePath($basePath));
     }
 
-    private function setContainer(): ApplicationInterface
+    public static function InitializeContainer(): ApplicationInterface
     {
         $builder = new DI\ContainerBuilder(Application::class);
         $builder->useAttributes(true);
