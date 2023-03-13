@@ -12,4 +12,6 @@ $container = \Framework\Core::InitializeContainer();
 
 $command = $container->get(CacheClearCommand::class);
 
-$command->execute();
+$args = array_slice($argv, 1);
+
+$command->execute($args);
