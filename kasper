@@ -2,6 +2,7 @@
 <?php
 
 use App\Console\Command\CacheClearCommand;
+use Framework\Console\Input;
 
 require __DIR__.'/vendor/autoload.php';
 
@@ -12,6 +13,6 @@ $container = \Framework\Core::InitializeContainer();
 
 $command = $container->get(CacheClearCommand::class);
 
-$args = array_slice($argv, 1);
+$input = new Input($argv);
 
-$command->execute($args);
+$command->execute($input);
