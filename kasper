@@ -1,9 +1,15 @@
 #!/usr/bin/env php
 <?php
 
+use App\Console\Command\CacheClearCommand;
+
 require __DIR__.'/vendor/autoload.php';
 
 /**
  * @var Psr\Container\ContainerInterface $container
  */
 $container = \Framework\Core::InitializeContainer();
+
+$command = $container->get(CacheClearCommand::class);
+
+$command->execute();
