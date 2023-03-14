@@ -12,7 +12,7 @@ class PrettyErrorResponseGeneratorFactory
 {
     public function __invoke(ContainerInterface $container): PrettyErrorResponseGenerator|WhoopsErrorResponseGenerator
     {
-        if ($container->get('config')['debug']) {
+        if (config('parameters')['debug']) {
             return new WhoopsErrorResponseGenerator(
                 $container->get(RunInterface::class),
                 new Response()

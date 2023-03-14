@@ -41,12 +41,7 @@ class ConfigurationLoader
 
         $configPath = realpath($application->getConfigPath());
 
-        foreach (Finder::create()->files()->name('*.php')
-                     ->notName('routes.php')
-                     ->notName('container.php')
-                     ->notName('pipeline.php')
-                     ->notName('dependencies.php')
-                     ->in($configPath) as $file) {
+        foreach (self::loadConfigFiles($configPath) as $file) {
             $directory = $this->getNestedDirectory($file, $configPath);
 
             $files[$directory . basename($file->getRealPath(), '.php')] = $file->getRealPath();
@@ -55,6 +50,16 @@ class ConfigurationLoader
         ksort($files, SORT_NATURAL);
 
         return $files;
+    }
+
+    public static function loadConfigFiles(string $configPath): Finder
+    {
+        return Finder::create()->files()->name('*.php')
+            ->notName('routes.php')
+            ->notName('container.php')
+            ->notName('pipeline.php')
+            ->notName('dependencies.php')
+            ->in($configPath);
     }
 
     protected function getNestedDirectory(SplFileInfo $file, string $configPath): string

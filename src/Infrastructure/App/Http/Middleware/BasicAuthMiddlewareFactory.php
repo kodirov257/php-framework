@@ -10,6 +10,6 @@ class BasicAuthMiddlewareFactory
 {
     public function __invoke(ContainerInterface $container): BasicAuthMiddleware
     {
-        return new BasicAuthMiddleware($container->get('config')['users'], new Response());
+        return new BasicAuthMiddleware(config('parameters')['users'], new Response());
     }
 }

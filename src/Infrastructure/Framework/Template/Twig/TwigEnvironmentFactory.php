@@ -15,7 +15,7 @@ class TwigEnvironmentFactory
     {
         $template = config('templates.template');
         $config = config('templates.' . $template);
-        $debug = $container->get('config')['debug'];
+        $debug = config('parameters')['debug'];
 
         $loader = new FilesystemLoader();
         $loader->addPath($config['template_dir']);

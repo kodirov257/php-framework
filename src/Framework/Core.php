@@ -25,7 +25,7 @@ class Core implements HttpKernelInterface
          * @var $container Application
          */
         $container = self::InitializeContainer();
-        $this->setConfiguration();
+        self::SetConfiguration($container);
         $app = $container->get(HttpApplication::class);
         $router = $container->get(Router::class);
 
@@ -57,14 +57,14 @@ class Core implements HttpKernelInterface
         return $controllers;
     }
 
-    private function setConfiguration(): void
+    public static function SetConfiguration(ApplicationInterface $application): void
     {
         $basePath = dirname(__DIR__, 2);
         $dotenv = Dotenv::createImmutable($basePath);
         $dotenv->load();
 
         $configLoader = new ConfigurationLoader();
-        $configLoader->bootstrap(Application::getInstance()->setBasePath($basePath));
+        $configLoader->bootstrap($application->setBasePath($basePath));
     }
 
     public static function InitializeContainer(): ApplicationInterface
@@ -78,6 +78,7 @@ class Core implements HttpKernelInterface
 
         /* @var $container Application */
         $container = $builder->build();
+        Application::setInstance($container);
 
         $container->set('config', require 'config/parameters.php');
 
