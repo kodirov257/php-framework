@@ -3,16 +3,16 @@
 
 use App\Console\Command\CacheClearCommand;
 use Framework\Console\Input;
+use Framework\Console\Output;
+use Framework\Core;
 
 require __DIR__.'/vendor/autoload.php';
 
 /**
  * @var Psr\Container\ContainerInterface $container
  */
-$container = \Framework\Core::InitializeContainer();
+$container = Core::InitializeContainer();
 
 $command = $container->get(CacheClearCommand::class);
 
-$input = new Input($argv);
-
-$command->execute($input);
+$command->execute(new Input($argv), new Output());
