@@ -14,7 +14,7 @@ class CacheClearCommand
 
     public function execute(Input $input, Output $output): void
     {
-        $output->comment('Clearing cache');
+        $output->writeln('<comment>Clearing cache</comment>');
 
         $alias = $input->getArgument(0);
 
@@ -41,7 +41,7 @@ class CacheClearCommand
             }
         }
 
-        $output->info('Done!');
+        $output->writeln('<info>Done!</info>');
     }
 
     private function delete(string $path): void
