@@ -13,4 +13,14 @@ class Output
     {
         echo $message . PHP_EOL;
     }
+
+    public function comment(string $message): void
+    {
+        $this->writeln("\033[33m" . $message . "\033[0m");
+    }
+
+    public function info(string $message): void
+    {
+        $this->writeln("\033[32m" . $message . "\033[0m");
+    }
 }
