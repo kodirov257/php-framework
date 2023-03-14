@@ -8,10 +8,8 @@ use Framework\Core;
 
 require __DIR__.'/vendor/autoload.php';
 
-/**
- * @var Psr\Container\ContainerInterface $container
- */
 $container = Core::InitializeContainer();
+Core::SetConfiguration($container);
 
 $command = $container->get(CacheClearCommand::class);
 
