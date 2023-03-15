@@ -9,4 +9,10 @@ $container = Core::InitializeContainer();
 Core::SetConfiguration($container);
 
 $cli = new Application();
+
+$commands = config('console.commands');
+foreach ($commands as $command) {
+    $cli->add($container->get($command));
+}
+
 $cli->run();
