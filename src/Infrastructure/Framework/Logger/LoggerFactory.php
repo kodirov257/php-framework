@@ -13,7 +13,7 @@ class LoggerFactory
         $logger = new Logger('App');
         $logger->pushHandler(new StreamHandler(
             'var/log/application.log',
-            config('parameters')['debug'] ? Logger::DEBUG : Logger::WARNING
+            config('parameters.debug') ? Logger::DEBUG : Logger::WARNING
         ));
         return $logger;
     }
