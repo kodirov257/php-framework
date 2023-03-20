@@ -19,4 +19,5 @@ return [
     ErrorResponseGenerator::class => DependencyInjection\factory(Framework\Http\Middleware\ErrorHandler\PrettyErrorResponseGeneratorFactory::class),
     Whoops\RunInterface::class => DependencyInjection\factory(Framework\Http\Middleware\ErrorHandler\WhoopsRunFactory::class),
     Psr\Log\LoggerInterface::class => DependencyInjection\factory(Framework\Logger\LoggerFactory::class),
+    Doctrine\ORM\EntityManagerInterface::class => DependencyInjection\factory(Roave\PsrContainerDoctrine\EntityManagerFactory::class),
 ];
