@@ -6,7 +6,7 @@ use Psr\Container\ContainerInterface;
 
 class PDOFactory
 {
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): \PDO
     {
         $dbConnection = config('database.database');
         $config = config('database.connections.' . $dbConnection);
