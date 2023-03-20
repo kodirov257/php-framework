@@ -24,8 +24,4 @@ return [
             ],
         ],
     ],
-
-    'phinx' => [
-        'database' => env('DB_DATABASE', 'database/db.sqlite'),
-    ],
 ];
