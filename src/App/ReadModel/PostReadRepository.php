@@ -13,12 +13,19 @@ class PostReadRepository
         $this->pdo = $pdo;
     }
 
+    public function countAll(): int
+    {
+        $stmt = $this->pdo->query('SELECT COUNT(id) FROM posts');
+        return $stmt->fetchColumn();
+    }
+
     /**
      * @return PostView[]
      */
-    public function getAll(): array
+    public function getAll(int $offset, int $limit): array
     {
-        $stmt = $this->pdo->query('SELECT * FROM posts ORDER BY id DESC');
+        $stmt = $this->pdo->prepare('SELECT * FROM posts ORDER BY id DESC LIMIT ? OFFSET ?');
+        $stmt->execute([$limit, $offset]);
 
         return array_map([$this, 'hydratePost'], $stmt->fetchAll());
     }

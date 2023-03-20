@@ -27,4 +27,10 @@
             <div class="panel-body">{{ post.content|nl2br }}</div>
         </div>
     {% endfor %}
+
+    {% include 'share/pager.html.twig' with {
+        'pager': pager,
+        'main_route': 'blog',
+        'route_name': 'blog_page',
+    } %}
 {% endblock %}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ReadModel\Pagination;
 use App\ReadModel\PostReadRepository;
 use Framework\Http\Controller;
 use Framework\Http\Router\Attributes\Get;
@@ -9,6 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class BlogController extends Controller
 {
+    private const PER_PAGE = 5;
     private PostReadRepository $posts;
 
     public function __construct(PostReadRepository $posts)
@@ -17,12 +19,27 @@ class BlogController extends Controller
     }
 
     #[Get(name: 'blog', uri: '/blog')]
-    public function index()
+    public function index(ServerRequestInterface $request)
     {
-        $posts = $this->posts->getAll();
+        $pager = new Pagination(
+            $this->posts->countAll(),
+            $request->getAttribute('page') ?: 1,
+            self::PER_PAGE
+        );
+        $posts = $this->posts->getAll(
+            $pager->getOffset(),
+            $pager->getLimit()
+        );
         return view('app/blog/index', [
             'posts' => $posts,
+            'pager' => $pager,
         ]);
+    }
+
+    #[Get(name: 'blog_page', uri: '/blog/page/{page}', tokens: ['page' => '\d+'])]
+    public function indexPage(ServerRequestInterface $request)
+    {
+        return $this->index($request);
     }
 
     #[Get(name: 'blog_show', uri: '/blog/{id}', tokens: ['id' => '\d+'])]

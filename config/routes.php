@@ -12,6 +12,7 @@ $router->get('home', '/', [Controllers\HelloController::class, 'index']);
 $router->get('about', '/about', [Controllers\AboutController::class, 'index']);
 
 $router->get('blog', '/blog', [Controllers\BlogController::class, 'index']);
+$router->get('blog_page', '/blog/page/{page}', [Controllers\BlogController::class, 'indexPage'], ['page' => '\d+']);
 $router->get('blog_show', '/blog/{id}', [Controllers\BlogController::class, 'show'], ['id' => '\d+']);
 
 $router->get('cabinet', '/cabinet', [
