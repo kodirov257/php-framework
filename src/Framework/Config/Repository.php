@@ -4,7 +4,7 @@ namespace Framework\Config;
 
 use Framework\Contracts\Config\Repository as ConfigContract;
 
-class Repository implements ConfigContract
+class Repository implements \ArrayAccess, ConfigContract
 {
     private array $items;
 
@@ -129,5 +129,25 @@ class Repository implements ConfigContract
     public function all(): array
     {
         return $this->items;
+    }
+
+    public function offsetExists(mixed $offset): bool
+    {
+        return $this->has($offset);
+    }
+
+    public function offsetGet(mixed $offset): mixed
+    {
+        return $this->get($offset);
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        $this->set($offset, $value);
+    }
+
+    public function offsetUnset(mixed $offset): void
+    {
+        $this->set($offset, null);
     }
 }
