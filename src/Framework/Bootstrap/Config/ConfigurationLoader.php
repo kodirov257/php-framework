@@ -13,7 +13,7 @@ class ConfigurationLoader
 {
     public function bootstrap(Application $application): void
     {
-        $application->registerInstance('configuration', $config = new Repository([]));
+        $application->registerInstance('config', $config = new Repository([]));
 
         $this->loadConfigurationFiles($application, $config);
 

@@ -29,7 +29,7 @@ if (!function_exists('config')) {
     function config(array|string|null $key = null, mixed $default = null)
     {
         /* @var $config Framework\Config\Repository */
-        $config = app('configuration');
+        $config = app('config');
         if (is_null($key)) {
             return $config;
         }
