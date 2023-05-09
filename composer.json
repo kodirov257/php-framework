@@ -54,6 +54,7 @@
         ],
         "test": "phpunit --colors=always",
         "cs-check": "phpcs",
-        "cs-fix": "phpcbf"
+        "cs-fix": "phpcbf",
+        "doctrine": "doctrine --ansi"
     }
 }
